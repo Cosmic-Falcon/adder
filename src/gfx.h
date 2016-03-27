@@ -4,6 +4,7 @@
 #include <fstream>
 #include <initializer_list>
 #include <iostream>
+#include <string>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

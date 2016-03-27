@@ -10,6 +10,8 @@ bool gfx::init(GLint version_major, GLint version_minor, GLboolean resizable) {
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
 
 	glewExperimental = GL_TRUE;
+
+	return true; // TODO: Should return false if initialization fails
 }
 
 

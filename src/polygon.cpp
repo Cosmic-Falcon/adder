@@ -34,6 +34,10 @@ int Polygon::get_indices_size() {
 	return indices_size;
 }
 
+int Polygon::get_num_elements() {
+	return num_elements;
+}
+
 int constrain(int index, int bound) {
 	int value = index;
 	while (value > bound) value -= bound;
@@ -45,6 +49,7 @@ int constrain(int index, int bound) {
 void Polygon::gen_gl_data() {
 	if (!cache_cur) {
 		int num_vertices = vertices.size();
+		num_elements = (num_vertices - 2) * 3;
 		
 		if (gl_vertices) delete[] gl_vertices;
 		if (gl_indices) delete[] gl_indices;
@@ -100,15 +105,21 @@ void Polygon::gen_gl_data() {
 			if (last != 0) prev_vertices.push_back(last);
 			DEBUG("FINAL A: " << a << "; B: " << b << std::endl);
 
-			if (a != left_index && b != left_index && a != b) {
+			if ((a != left_index && b != left_index && a != b) || (a == b && a == right_index)) {
 				/* If the next vertex is on the bottom half of the polygon and the previous
 				 * vertices that don't form triangles are on the top half (or vice-versa),
 				 * then the current point and all of the previous points will form a series
 				 * of triangles shaped similarly to a chinese fan. If a fan of triangles is
 				 * formed, add each of the triangles in the fan
 				 */
-				if (current-1 != last) {
+				if ((current == a && current-1 != last) || (current == b && current+1 != last)) {
 					DEBUG("Fan");
+					#ifdef DEBUG_MODE
+						std::string str = "";
+						for (auto i : prev_vertices) str += std::to_string(i) + " ";
+						DEBUG("Previous vertices: " << str);
+					#endif
+
 					int num_prev_vertices = prev_vertices.size();
 					for (int j = 0; j < num_prev_vertices - 1; ++j) {
 						DEBUG("Triangle around point " << prev_vertices[j]);
@@ -134,18 +145,20 @@ void Polygon::gen_gl_data() {
 					double new_slope = double(vertices[current-2][1] - vertices[current][1]) / double(vertices[current-2][0] - vertices[current][0]);
 
 					if (current == a && new_slope < old_slope) { // Ear on top
-						DEBUG("Upper ear" << std::endl);
+						DEBUG("Upper ear around " << current);
 						gl_indices[indices_index++] = current;
 						gl_indices[indices_index + 2] = prev_vertices.back();
 						prev_vertices.pop_back();
 						gl_indices[indices_index++] = prev_vertices.back();
 						++indices_index;
+						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
 					} else if (current == b && new_slope > old_slope) { // Ear on bottom
-						DEBUG("Lower ear" << std::endl);
+						DEBUG("Lower ear around " << current);
 						gl_indices[indices_index++] = current;
 						gl_indices[indices_index++] = prev_vertices.back();
 						prev_vertices.pop_back();
 						gl_indices[indices_index++] = prev_vertices.back();
+						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
 					}
 				}
 			}
@@ -154,5 +167,17 @@ void Polygon::gen_gl_data() {
 		vertices_size = sizeof(GLfloat) * num_vertices * 3;
 		indices_size = sizeof(GLint) * (num_vertices - 2) * 3;
 		cache_cur = true;
+
+		#ifdef DEBUG_MODE
+			std::string indices = "";
+			for (int i = 0; i < (num_vertices - 2) * 3; ++i) {
+				indices += "(";
+				indices += std::to_string(gl_indices[i]) + ", ";
+				indices += std::to_string(gl_indices[++i]) + ", ";
+				indices += std::to_string(gl_indices[++i]);
+				indices += ") ";
+			}
+			DEBUG("Indices: " << indices << std::endl);
+		#endif
 	}
 }

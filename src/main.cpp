@@ -20,7 +20,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{0, 0}, {0, 64}, {64, 64}, {64, 0}});
+	Polygon poly({{0, 0}, {0, 64}, {64, 64}, {64, 0}, {32, 8}});
 
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");
@@ -90,8 +90,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		//glDrawArrays(GL_TRIANGLES, 0, 4);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, poly.get_num_elements(), GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

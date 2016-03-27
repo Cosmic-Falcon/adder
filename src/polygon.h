@@ -15,6 +15,7 @@ public:
 	GLuint* get_indices();
 	int get_vertices_size();
 	int get_indices_size();
+	int get_num_elements();
 private:
 	void gen_gl_data();
 
@@ -28,6 +29,7 @@ private:
 	GLuint* gl_indices;
 	int vertices_size;
 	int indices_size;
+	int num_elements;
 };
 
 #endif // GEO_POLYGON_H

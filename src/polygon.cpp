@@ -80,8 +80,8 @@ void Polygon::gen_gl_data() {
 		int current = left_index; // Vertex being analyzed
 		int last = left_index; // Last vertex to be analyzed
 
-		std::vector<int> prev_vertices;
-		prev_vertices.push_back(0);
+		std::vector<int> remaining_vertices;
+		remaining_vertices.push_back(0);
 
 		// Sweep through vertices from left to right and triangulate each monotone polygon
 		for (int i = 0; i < num_vertices; ++i) {
@@ -102,33 +102,34 @@ void Polygon::gen_gl_data() {
 				last = current;
 				current = b;
 			}
-			if (last != 0) prev_vertices.push_back(last);
+			if (last != 0) remaining_vertices.push_back(last);
+			DEBUG("ADDING TO REMAINING VERTICES: " << last);
 			DEBUG("FINAL A: " << a << "; B: " << b << std::endl);
 
-			if ((a != left_index && b != left_index && a != b) || (a == b && a == right_index)) {
-				/* If the next vertex is on the bottom half of the polygon and the previous
-				 * vertices that don't form triangles are on the top half (or vice-versa),
-				 * then the current point and all of the previous points will form a series
-				 * of triangles shaped similarly to a chinese fan. If a fan of triangles is
-				 * formed, add each of the triangles in the fan
-				 */
+			/* If the next vertex is on the bottom half of the polygon and the previous
+			 * vertices that don't form triangles are on the top half (or vice-versa),
+			 * then the current point and all of the previous points will form a series
+			 * of triangles shaped similarly to a chinese fan. If a fan of triangles is
+			 * formed, add each of the triangles in the fan
+			 */
+			if (indices_index < num_elements && a != left_index && b != left_index) {
 				if ((current == a && current-1 != last) || (current == b && current+1 != last)) {
 					DEBUG("Fan");
 					#ifdef DEBUG_MODE
 						std::string str = "";
-						for (auto i : prev_vertices) str += std::to_string(i) + " ";
-						DEBUG("Previous vertices: " << str);
+						for (auto i : remaining_vertices) str += std::to_string(i) + " ";
+						DEBUG("Remaining vertices: " << str);
 					#endif
 
-					int num_prev_vertices = prev_vertices.size();
-					for (int j = 0; j < num_prev_vertices - 1; ++j) {
-						DEBUG("Triangle around point " << prev_vertices[j]);
+					int num_remaining_vertices = remaining_vertices.size();
+					for (int j = 0; j < num_remaining_vertices - 1; ++j) {
+						DEBUG("Triangle around point " << remaining_vertices[j]);
 						gl_indices[indices_index++] = current;
 
 						// Add vertices in clockwise order
-						int vert_a = prev_vertices.front();
-						prev_vertices.erase(prev_vertices.begin());
-						int vert_b = prev_vertices.front();
+						int vert_a = remaining_vertices.front();
+						remaining_vertices.erase(remaining_vertices.begin());
+						int vert_b = remaining_vertices.front();
 						if (vertices[vert_a][1] < vertices[vert_b][1]) {
 							gl_indices[indices_index++] = vert_a;
 							gl_indices[indices_index++] = vert_b;
@@ -147,17 +148,17 @@ void Polygon::gen_gl_data() {
 					if (current == a && new_slope < old_slope) { // Ear on top
 						DEBUG("Upper ear around " << current);
 						gl_indices[indices_index++] = current;
-						gl_indices[indices_index + 2] = prev_vertices.back();
-						prev_vertices.pop_back();
-						gl_indices[indices_index++] = prev_vertices.back();
+						gl_indices[indices_index + 2] = remaining_vertices.back();
+						remaining_vertices.pop_back();
+						gl_indices[indices_index++] = remaining_vertices.back();
 						++indices_index;
 						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
 					} else if (current == b && new_slope > old_slope) { // Ear on bottom
 						DEBUG("Lower ear around " << current);
 						gl_indices[indices_index++] = current;
-						gl_indices[indices_index++] = prev_vertices.back();
-						prev_vertices.pop_back();
-						gl_indices[indices_index++] = prev_vertices.back();
+						gl_indices[indices_index++] = remaining_vertices.back();
+						remaining_vertices.pop_back();
+						gl_indices[indices_index++] = remaining_vertices.back();
 						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
 					}
 				}

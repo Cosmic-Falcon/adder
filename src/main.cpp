@@ -20,7 +20,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{0, 0}, {0, 64}, {64, 64}, {64, 0}, {32, 8}});
+	Polygon poly({{0, 0}, {0, 64}, {32, 56}, {64, 64}, {64, 0}, {32, 8}});
+	//Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}});
 
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");

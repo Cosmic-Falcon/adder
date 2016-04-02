@@ -80,7 +80,7 @@ void Polygon::gen_gl_data() {
 		int last = left_index; // Last vertex to be analyzed
 
 		std::vector<int> remaining_vertices;
-		remaining_vertices.push_back(0);
+		remaining_vertices.push_back(left_index);
 
 		// Sweep through vertices from left to right and triangulate each monotone polygon
 		for (int i = 0; i < num_vertices; ++i) {
@@ -101,7 +101,7 @@ void Polygon::gen_gl_data() {
 				last = current;
 				current = b;
 			}
-			if (last != 0) remaining_vertices.push_back(last);
+			if (last != left_index) remaining_vertices.push_back(last);
 			DEBUG("ADDING TO REMAINING VERTICES: " << last);
 			DEBUG("FINAL A: " << a << "; B: " << b << std::endl);
 

@@ -39,11 +39,10 @@ int Polygon::get_num_elements() {
 }
 
 int constrain(int index, int bound) {
-	int value = index;
-	while (value > bound) value -= bound;
-	while (value < 0) value += bound;
+	while (index > bound) index -= bound;
+	while (index < 0) index += bound;
 
-	return value;
+	return index;
 }
 
 void Polygon::gen_gl_data() {
@@ -140,10 +139,12 @@ void Polygon::gen_gl_data() {
 
 						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1]);
 					}
-					std::cout << std::endl;
+					#ifdef DEBUG_MODE
+						std::cout << std::endl;
+					#endif
 				} else { // If a fan is not formed, check if a triangular ear is formed
-					double old_slope = double(vertices[current-2][1] - vertices[current-1][1]) / double(vertices[current-2][0] - vertices[current-1][0]);
-					double new_slope = double(vertices[current-2][1] - vertices[current][1]) / double(vertices[current-2][0] - vertices[current][0]);
+					double old_slope = double(vertices[constrain(current-2, num_vertices)][1] - vertices[constrain(current-1, num_vertices)][1]) / double(vertices[constrain(current-2, num_vertices)][0] - vertices[constrain(current-1, num_vertices)][0]);
+					double new_slope = double(vertices[constrain(current-2, num_vertices)][1] - vertices[constrain(current, num_vertices)][1]) / double(vertices[constrain(current-2, num_vertices)][0] - vertices[constrain(current, num_vertices)][0]);
 
 					if (current == a && new_slope < old_slope) { // Ear on top
 						DEBUG("Upper ear around " << current);

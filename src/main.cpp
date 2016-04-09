@@ -12,15 +12,15 @@
 bool keys[1024];
 
 // Camera
-GLfloat camera_x = 128.0f;
-GLfloat camera_y = 128.0f;
+GLfloat camera_x = 0;
+GLfloat camera_y = 0;
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode); // Register key presses
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}});
+	Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}}, 128, 128);
 
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");

@@ -8,20 +8,22 @@
 
 class Polygon {
 public:
-	Polygon(std::vector<std::array<GLfloat, 2>> vertices, GLfloat x=0, GLfloat y=0);
+	using RectPoint = std::array<GLfloat, 2>;
+	Polygon(std::vector<RectPoint> vertices, GLfloat x = 0, GLfloat y = 0);
 	~Polygon();
-
+	void translate(RectPoint xy);
 	GLfloat* get_vertices();
 	GLuint* get_indices();
 	int get_vertices_size();
 	int get_indices_size();
 	int get_num_elements();
+
 private:
 	void gen_gl_data();
 
 	GLfloat x;
 	GLfloat y;
-	std::vector<std::array<GLfloat, 2>> vertices;
+	std::vector<RectPoint> vertices;
 
 	// Cache data
 	bool cache_cur = false; // True if the cache is current
@@ -31,5 +33,7 @@ private:
 	int indices_size;
 	int num_elements;
 };
+
+std::string to_string(const std::vector<std::array<GLfloat, 2>> &vertices);
 
 #endif // GEO_POLYGON_H

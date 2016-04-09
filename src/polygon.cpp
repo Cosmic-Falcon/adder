@@ -4,7 +4,7 @@ Polygon::Polygon(std::vector<std::array<GLfloat, 2>> vertices, GLfloat x, GLfloa
 	this->x = x;
 	this->y = y;
 	this->vertices = vertices;
-
+	translate({ x, y });
 	gl_vertices = nullptr;
 	gl_indices = nullptr;
 }
@@ -12,6 +12,13 @@ Polygon::Polygon(std::vector<std::array<GLfloat, 2>> vertices, GLfloat x, GLfloa
 Polygon::~Polygon() {
 	delete[] gl_vertices;
 	delete[] gl_indices;
+}
+
+void Polygon::translate(RectPoint xy) {
+	for (RectPoint &pt : vertices) {
+		pt[0] += xy[0];
+		pt[1] += xy[1];
+	}
 }
 
 GLfloat* Polygon::get_vertices() {
@@ -182,4 +189,11 @@ void Polygon::gen_gl_data() {
 			DEBUG("Indices: " << indices << std::endl);
 		#endif
 	}
+}
+
+std::string to_string(const std::vector<std::array<GLfloat, 2>> &vertices) {
+	std::string str = "";
+	for (const std::array<GLfloat, 2> &vertex : vertices)
+		str += "(" + std::to_string(vertex[0]) + ", " + std::to_string(vertex[1]) + ") ";
+	return str;
 }

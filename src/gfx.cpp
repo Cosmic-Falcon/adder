@@ -20,7 +20,7 @@ GLuint gfx::compile_shader(const char* source, GLenum type) {
 	std::ifstream shader_file;
 	shader_file.open(source, std::ios::in);
 	std::string shader_source;
-	if (shader_file.is_open()) {
+	if(shader_file.is_open()) {
 		std::string line = "";
 		while(std::getline(shader_file, line)) {
 			shader_source += line + "\n";
@@ -38,7 +38,7 @@ GLuint gfx::compile_shader(const char* source, GLenum type) {
 	GLint success;
 	GLchar info_log[512];
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
+	if(!success) {
 		glGetShaderInfoLog(shader, 512, NULL, info_log);
 		ERROR(source << ":" << info_log);
 
@@ -50,7 +50,7 @@ GLuint gfx::compile_shader(const char* source, GLenum type) {
 
 GLuint gfx::create_program(std::initializer_list<GLuint> shaders) {
 	GLuint program = glCreateProgram();
-	for (GLuint shader : shaders) {
+	for(GLuint shader : shaders) {
 		glAttachShader(program, shader);
 	}
 	glLinkProgram(program);
@@ -67,11 +67,11 @@ GLuint gfx::load_texture(const char* source) {
 	GLuint texture;
 	glGenTextures(1, &texture);
 
-	if (image == NULL) {
+	if(image == NULL) {
 		ERROR("Image " << source << " does not exist");
 		return texture;
 	}
-	
+
 	glBindTexture(GL_TEXTURE_2D, texture);
 	//           Internal info                               External info
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
@@ -92,13 +92,13 @@ void gfx::set_texture(GLenum target, GLenum unit, GLuint texture) {
 // Windows
 GLFWwindow* gfx::create_window(int width, int height, std::string name, GLFWmonitor* monitor, GLFWwindow* share) {
 	GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), monitor, share);
-	if (window == nullptr) {
+	if(window == nullptr) {
 		ERROR("Failed to create window \"" << name << "\"");
 	}
 
 	glfwMakeContextCurrent(window);
 
-	if (glewInit() != GLEW_OK) {
+	if(glewInit() != GLEW_OK) {
 		ERROR("Failed to initialize GLEW for window \"" << name << "\"");
 	}
 

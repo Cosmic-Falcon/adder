@@ -8,6 +8,7 @@
 #include "polygon.h"
 #include "gfx.h"
 
+const GLfloat PI = 3.1415;
 
 bool keys[1024];
 
@@ -20,8 +21,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}}, 128, 128);
-
+	Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}}, 0, 0);
+	poly.translate({128, 128});
+	poly.rotate(3*PI/4, poly.get_pos());
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");
 	glfwSetKeyCallback(window, key_callback);
@@ -34,7 +36,7 @@ int main() {
 	GLuint shader_program = gfx::create_program({vertex_shader, fragment_shader});
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
-	
+
 	// Create vertex array object
 	// The vertex array object stores the states of the vertex and index buffer
 	// objects defined inside of it, allowing them to be easily reused again.
@@ -52,7 +54,7 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, poly.get_vertices_size(), poly.get_vertices(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*) 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -62,7 +64,7 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	
+
 	// Transformation matrices
 	glm::mat4 model, view, projection;
 	projection = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f);
@@ -81,7 +83,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		glBindVertexArray(vao);	
+		glBindVertexArray(vao);
 
 		// Render
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -108,25 +110,25 @@ int main() {
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	// Close when escape is pressed
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+	if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-	if (action == GLFW_PRESS) {
+	if(action == GLFW_PRESS) {
 		keys[key] = true;
-	} else if (action == GLFW_RELEASE) {
+	} else if(action == GLFW_RELEASE) {
 		keys[key] = false;
 	}
 }
 
 void key_parse() {
-	if (keys[GLFW_KEY_W]) {
+	if(keys[GLFW_KEY_W]) {
 		camera_y -= 4;
-	} if (keys[GLFW_KEY_A]) {
+	} if(keys[GLFW_KEY_A]) {
 		camera_x += 4;
-	} if (keys[GLFW_KEY_S]) {
+	} if(keys[GLFW_KEY_S]) {
 		camera_y += 4;
-	} if (keys[GLFW_KEY_D]) {
+	} if(keys[GLFW_KEY_D]) {
 		camera_x -= 4;
 	}
 }

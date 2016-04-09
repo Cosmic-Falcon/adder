@@ -11,13 +11,14 @@ public:
 	using RectPoint = std::array<GLfloat, 2>;
 	Polygon(std::vector<RectPoint> vertices, GLfloat x = 0, GLfloat y = 0);
 	~Polygon();
-	void translate(RectPoint xy);
+	void rotate(float ang, const RectPoint &axis); //apparently glm has its own rotate but whatev
+	void translate(const RectPoint &xy);
 	GLfloat* get_vertices();
 	GLuint* get_indices();
 	int get_vertices_size();
 	int get_indices_size();
 	int get_num_elements();
-
+	RectPoint get_pos();
 private:
 	void gen_gl_data();
 

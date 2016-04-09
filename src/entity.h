@@ -11,4 +11,4 @@ private:
 	Polygon polygon;
 };
 
-#endif
+#endif // ENTITY_H

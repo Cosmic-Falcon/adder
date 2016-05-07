@@ -26,7 +26,7 @@ void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	rot_mat[0][0] = std::cos(ang);
 	rot_mat[0][1] = std::sin(ang);
 	rot_mat[1][0] = std::sin(ang);
-	rot_mat[1][0] = -std;:cos(ang);
+	rot_mat[1][0] = -std::cos(ang);
 	for(int i = 0; i < vertices.size(); ++i) {
 		vertices[i] = rot_mat*vertices[i];	
 	}

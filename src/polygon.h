@@ -34,6 +34,6 @@ private:
 	int num_elements;
 };
 
-std::string to_string(const std::vector<std::array<GLfloat, 2>> &vertices);
+std::string to_string(const std::vector<glm::vec4> &vertices);
 
 #endif // GEO_POLYGON_H

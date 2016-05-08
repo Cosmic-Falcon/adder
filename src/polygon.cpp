@@ -4,7 +4,12 @@ Polygon::Polygon(std::vector<glm::vec4> vertices, GLfloat x, GLfloat y) {
 	this->x = x;
 	this->y = y;
 	this->vertices = vertices;
-	translate({x, y});
+	glm::vec4 trans_vec;
+	trans_vec[0] = x;
+	trans_vec[1] = y;
+	trans_vec[2] = 0;
+	trans_vec[3] = 1;
+	translate(trans_vec);
 	gl_vertices = nullptr;
 	gl_indices = nullptr;
 	std::cout << to_string(vertices) << std::endl;
@@ -17,7 +22,10 @@ Polygon::~Polygon() {
 
 void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	if(ang == 0) return;
-	translate({-axis[0], -axis[1]});
+	glm::vec4 negated_axis;
+	negated_axis = -axis;
+	negated_axis[3] = 1;
+	translate(negated_axis);
 	std::cout << axis[0] << ", " << axis[1] << std::endl;
 	glm::mat4 rot_mat;
 	for (int x = 0; x < 4; ++x)
@@ -39,8 +47,8 @@ void Polygon::translate(const glm::vec4 &xy) {
 	x += xy[0];
 	y += xy[1];
 	for(glm::vec4 &pt : vertices) {
-		pt[0] += xy[0];
-		pt[1] += xy[1];
+		pt += xy;
+		pt[3] = 1;
 	}
 }
 

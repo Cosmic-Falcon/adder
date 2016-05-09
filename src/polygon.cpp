@@ -7,7 +7,6 @@ Polygon::Polygon(std::vector<std::array<GLfloat, 2>> vertices, GLfloat x, GLfloa
 	translate({x, y});
 	gl_vertices = nullptr;
 	gl_indices = nullptr;
-	std::cout << to_string(vertices) << std::endl;
 }
 
 Polygon::~Polygon() {
@@ -18,7 +17,6 @@ Polygon::~Polygon() {
 void Polygon::rotate(float ang, const RectPoint &axis) {
 	if(ang == 0) return;
 	translate({-axis[0], -axis[1]});
-	std::cout << axis[0] << ", " << axis[1] << std::endl;
 	for(int i = 0; i < vertices.size(); ++i) {
 		const GLfloat x = vertices[i][0];
 		const GLfloat y = vertices[i][1];
@@ -31,7 +29,6 @@ void Polygon::rotate(float ang, const RectPoint &axis) {
 		}
 	}
 	translate(axis);
-	std::cout << to_string(vertices) << std::endl;
 
 }
 

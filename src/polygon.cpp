@@ -1,12 +1,18 @@
 #include "polygon.h"
 
-Polygon::Polygon(std::vector<std::array<GLfloat, 2>> vertices, GLfloat x, GLfloat y) {
+Polygon::Polygon(std::vector<glm::vec4> vertices, GLfloat x, GLfloat y) {
 	this->x = x;
 	this->y = y;
 	this->vertices = vertices;
-	translate({x, y});
+	glm::vec4 trans_vec;
+	trans_vec[0] = x;
+	trans_vec[1] = y;
+	trans_vec[2] = 0;
+	trans_vec[3] = 1;
+	translate(trans_vec);
 	gl_vertices = nullptr;
 	gl_indices = nullptr;
+	std::cout << to_string(vertices) << std::endl;
 }
 
 Polygon::~Polygon() {
@@ -14,30 +20,35 @@ Polygon::~Polygon() {
 	delete[] gl_indices;
 }
 
-void Polygon::rotate(float ang, const RectPoint &axis) {
+void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	if(ang == 0) return;
-	translate({-axis[0], -axis[1]});
+	glm::vec4 negated_axis;
+	negated_axis = -axis;
+	negated_axis[3] = 1;
+	translate(negated_axis);
+	std::cout << axis[0] << ", " << axis[1] << std::endl;
+	glm::mat4 rot_mat;
+	for (int x = 0; x < 4; ++x)
+		for (int y = 0; y < 4; ++y)
+			rot_mat[x][y] = 0;
+	rot_mat[0][0] = std::cos(ang);
+	rot_mat[0][1] = std::sin(ang);
+	rot_mat[1][0] = std::sin(ang);
+	rot_mat[1][0] = -std::cos(ang);
 	for(int i = 0; i < vertices.size(); ++i) {
-		const GLfloat x = vertices[i][0];
-		const GLfloat y = vertices[i][1];
-		if(ang < 0) {
-			vertices[i][0] = std::cosf(ang)*x + std::sinf(ang)*y;
-			vertices[i][1] = std::sinf(ang)*x - std::cosf(ang)*y;
-		} else if(ang > 0) {
-			vertices[i][0] = std::cosf(ang)*x - std::sinf(ang)*y;
-			vertices[i][1] = std::sinf(ang)*x + std::cosf(ang)*y;
-		}
+		vertices[i] = rot_mat*vertices[i];	
 	}
 	translate(axis);
+	std::cout << to_string(vertices) << std::endl;
 
 }
 
-void Polygon::translate(const RectPoint &xy) {
+void Polygon::translate(const glm::vec4 &xy) {
 	x += xy[0];
 	y += xy[1];
-	for(RectPoint &pt : vertices) {
-		pt[0] += xy[0];
-		pt[1] += xy[1];
+	for(glm::vec4 &pt : vertices) {
+		pt += xy;
+		pt[3] = 1;
 	}
 }
 
@@ -65,14 +76,18 @@ int Polygon::get_num_elements() {
 	return num_elements;
 }
 
-std::array<GLfloat, 2> Polygon::get_pos() {
-	return{x, y};
+glm::vec4 Polygon::get_pos() {
+	glm::vec4 pos;
+	pos[0] = x;
+	pos[1] = y;
+	pos[2] = 0;
+	pos[3] = 1; 
+	return pos;
 }
 
 int constrain(int index, int bound) {
 	while(index > bound) index -= bound;
 	while(index < 0) index += bound;
-
 	return index;
 }
 
@@ -215,9 +230,9 @@ void Polygon::gen_gl_data() {
 	}
 }
 
-std::string to_string(const std::vector<std::array<GLfloat, 2>> &vertices) {
+std::string to_string(const std::vector<glm::vec4> &vertices) {
 	std::string str = "";
-	for(const std::array<GLfloat, 2> &vertex : vertices)
+	for(const glm::vec4 &vertex : vertices)
 		str += "(" + std::to_string(vertex[0]) + ", " + std::to_string(vertex[1]) + ") ";
 	return str;
 }

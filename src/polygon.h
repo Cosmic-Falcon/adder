@@ -8,24 +8,23 @@
 
 class Polygon {
 public:
-	using RectPoint = std::array<GLfloat, 2>;
-	Polygon(std::vector<RectPoint> vertices, GLfloat x = 0, GLfloat y = 0);
+	using vec4 = glm::vec4;
+	Polygon(std::vector<vec4> vertices, GLfloat x = 0, GLfloat y = 0);
 	~Polygon();
-	void rotate(float ang, const RectPoint &axis); //apparently glm has its own rotate but whatev
-	void translate(const RectPoint &xy);
+	void rotate(float ang, const vec4 &axis); //apparently glm has its own rotate but whatev
+	void translate(const vec4 &xy);
 	GLfloat* get_vertices();
 	GLuint* get_indices();
 	int get_vertices_size();
 	int get_indices_size();
 	int get_num_elements();
-	RectPoint get_pos();
+	vec4 get_pos();
 private:
 	void gen_gl_data();
 
 	GLfloat x;
 	GLfloat y;
-	std::vector<RectPoint> vertices;
-
+	std::vector<vec4> vertices;
 	// Cache data
 	bool cache_cur = false; // True if the cache is current
 	GLfloat* gl_vertices;
@@ -35,6 +34,6 @@ private:
 	int num_elements;
 };
 
-std::string to_string(const std::vector<std::array<GLfloat, 2>> &vertices);
+std::string to_string(const std::vector<glm::vec4> &vertices);
 
 #endif // GEO_POLYGON_H

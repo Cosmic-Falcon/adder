@@ -8,7 +8,7 @@
 #include "polygon.h"
 #include "gfx.h"
 
-const GLfloat PI = glm::pi<GLfloat>();
+const GLfloat PI = 3.1415;
 
 bool keys[1024];
 
@@ -21,13 +21,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}}, 0, 0);
-	poly.translate({128, 128});
-	poly.rotate(PI/4, poly.get_pos());
+	Polygon poly({{0, 0, 0, 1}, {-8, 32, 0, 1}, {0, 64, 0, 1}, {32, 56, 0, 1}, {64, 64, 0, 1}, {72, 32, 0, 1},  {64, 0, 0, 1}, {32, 8, 0, 1}}, 0, 0);
+	poly.translate({128, 128, 0, 1});
+//	poly.rotate(3*PI/4, poly.get_pos());
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");
 	glfwSetKeyCallback(window, key_callback);
-	std::cout << PI << std::endl;
+
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 

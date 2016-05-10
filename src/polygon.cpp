@@ -25,22 +25,15 @@ void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	glm::vec4 negated_axis;
 	negated_axis = -axis;
 	negated_axis[3] = 1;
-	translate(negated_axis);
+	translate(negated_axis); 
 	std::cout << axis[0] << ", " << axis[1] << std::endl;
-	glm::mat4 rot_mat;
-	for (int x = 0; x < 4; ++x)
-		for (int y = 0; y < 4; ++y)
-			rot_mat[x][y] = 0;
-	rot_mat[0][0] = std::cos(ang);
-	rot_mat[0][1] = std::sin(ang);
-	rot_mat[1][0] = std::sin(ang);
-	rot_mat[1][0] = -std::cos(ang);
-	for(int i = 0; i < vertices.size(); ++i) {
-		vertices[i] = rot_mat*vertices[i];	
-	}
+	glm::mat4 rotmat(1.0);
+	rotmat = glm::rotate(rotmat, ang*180/glm::pi<float>(), glm::vec3(0,0,1));	
+	for (int i = 0; i < vertices.size(); ++i)
+		vertices[i] = rotmat*vertices[i];
+	std::cout << "hi" << std::endl << std::endl;
 	translate(axis);
 	std::cout << to_string(vertices) << std::endl;
-
 }
 
 void Polygon::translate(const glm::vec4 &xy) {

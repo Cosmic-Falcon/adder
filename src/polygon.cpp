@@ -1,12 +1,12 @@
 #include "polygon.h"
 
-Polygon::Polygon(std::vector<glm::vec4> vertices, GLfloat x, GLfloat y) {
-	this->x = x;
-	this->y = y;
-	this->vertices = vertices;
+Polygon::Polygon(std::vector<glm::vec4> vertices, GLfloat x, GLfloat y) :
+	x{x},
+	y{y},
+	vertices{vertices} {
 	glm::vec4 trans_vec;
-	trans_vec[0] = x;
-	trans_vec[1] = y;
+	trans_vec[0] = this->x;
+	trans_vec[1] = this->y;
 	trans_vec[2] = 0;
 	trans_vec[3] = 1;
 	translate(trans_vec);
@@ -21,26 +21,15 @@ Polygon::~Polygon() {
 }
 
 void Polygon::rotate(float ang, const glm::vec4 &axis) {
-	if(ang == 0) return;
+	if(ang == 0  ) return;
 	glm::vec4 negated_axis;
 	negated_axis = -axis;
 	negated_axis[3] = 1;
-	translate(negated_axis);
-	std::cout << axis[0] << ", " << axis[1] << std::endl;
-	glm::mat4 rot_mat;
-	for (int x = 0; x < 4; ++x)
-		for (int y = 0; y < 4; ++y)
-			rot_mat[x][y] = 0;
-	rot_mat[0][0] = std::cos(ang);
-	rot_mat[0][1] = std::sin(ang);
-	rot_mat[1][0] = std::sin(ang);
-	rot_mat[1][0] = -std::cos(ang);
-	for(int i = 0; i < vertices.size(); ++i) {
-		vertices[i] = rot_mat*vertices[i];	
-	}
+	translate(negated_axis); 
+	glm::mat4 rotmat = glm::rotate(glm::mat4(1.0), (float) ang*180/PI,glm::vec3(0, 0, 1)); // Always rotating around z-axis
+	for (int i = 0; i < vertices.size(); ++i)
+		vertices[i] = rotmat*vertices[i];
 	translate(axis);
-	std::cout << to_string(vertices) << std::endl;
-
 }
 
 void Polygon::translate(const glm::vec4 &xy) {

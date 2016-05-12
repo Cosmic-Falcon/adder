@@ -9,4 +9,5 @@
 
 #define ERROR(msg) std::cerr << "ERROR! (" << __FILE__ << ":" << __LINE__ << "): " << msg << std::endl;
 
+const float PI = glm::pi<float>(); 
 #endif // GLOBAL_H

@@ -8,8 +8,6 @@
 #include "polygon.h"
 #include "gfx.h"
 
-const GLfloat PI = 3.1415;
-
 bool keys[1024];
 
 // Camera
@@ -23,7 +21,7 @@ void key_parse(); // Act on key presses
 int main() {
 	Polygon poly({{-32, 32, 0, 1}, {32, 32, 0, 1}, {32, -32, 0, 1}, {-32, -32, 0, 1}}, 0, 0);
 	poly.translate({256, 128, 0, 1});
-	poly.rotate(11*glm::pi<float>()/3, poly.get_pos());
+	poly.rotate(2*PI/3, poly.get_pos());
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");
 	glfwSetKeyCallback(window, key_callback);
@@ -123,12 +121,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void key_parse() {
 	if(keys[GLFW_KEY_W]) {
-		camera_y -= 4;
-	} if(keys[GLFW_KEY_A]) {
-		camera_x += 4;
-	} if(keys[GLFW_KEY_S]) {
 		camera_y += 4;
-	} if(keys[GLFW_KEY_D]) {
+	} if(keys[GLFW_KEY_A]) {
 		camera_x -= 4;
+	} if(keys[GLFW_KEY_S]) {
+		camera_y -= 4;
+	} if(keys[GLFW_KEY_D]) {
+		camera_x += 4;
 	}
 }

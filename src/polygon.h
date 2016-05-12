@@ -11,7 +11,7 @@ public:
 	using vec4 = glm::vec4;
 	Polygon(std::vector<vec4> vertices, GLfloat x = 0, GLfloat y = 0);
 	~Polygon();
-	void rotate(float ang, const vec4 &axis); //apparently glm has its own rotate but whatev
+	void rotate(float ang, const vec4 &axis); 
 	void translate(const vec4 &xy);
 	GLfloat* get_vertices();
 	GLuint* get_indices();

@@ -50,23 +50,27 @@ vertices_t Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start
 	int num_vertices = vertices.size();
 	vertices_t subpolygon;
 
+	DEBUG("Top vertices");
 	for (int i = top_start; i != top_end; i = constrain(i + 1, num_vertices)) {
 		DEBUG(i);
 		subpolygon.push_back(vertices[i]);
 	}
 	subpolygon.push_back(vertices[top_end]);
+	DEBUG(top_end);
 
+	DEBUG("Bottom vertices");
 	for (int i = bottom_start; i != bottom_end; i = constrain(i + 1, num_vertices)) {
 		DEBUG(i);
 		subpolygon.push_back(vertices[i]);
 	}
 	subpolygon.push_back(vertices[bottom_end]);
+	DEBUG(bottom_end);
 
 	top_start = top_end;
 	bottom_end = bottom_start;
 
-	DEBUG(top_start);
-	DEBUG(bottom_end);
+	DEBUG("New top start: " << top_start);
+	DEBUG("New bottom start: " << bottom_end);
 
 	return subpolygon;
 }
@@ -149,12 +153,14 @@ std::vector<vertices_t> Polygon::partition() {
 	for (int i = 0; i < num_vertices; ++i) {
 		int index = current->index;
 
-		if (index != left_index && vertices[index][0] < vertices[constrain(index - 1, num_vertices)][0] && vertices[index][0] < vertices[constrain(index + 1, num_vertices)][0]) {
+		if (vertices[index][0] > vertices[left_index][0] && vertices[index][0] < vertices[constrain(index - 1, num_vertices)][0] && vertices[index][0] < vertices[constrain(index + 1, num_vertices)][0]) { // Split
 			DEBUG("Split creates: " << start_index << ", " << index << ", " << current->left->index << ", " << close_index);
-			partitions.push_back(get_subpolygon(start_index, index, current->left->index, close_index));
-		} else if (index != right_index && vertices[i][0] > vertices[constrain(index - 1, num_vertices)][0] && vertices[i][0] > vertices[constrain(index + 1, num_vertices)][0]) {
+			partitions.push_back(get_subpolygon(start_index, std::min(index, current->left->index), std::max(index, current->left->index), close_index));
+			DEBUG(start_index << ", " << close_index);
+		} else if (vertices[index][0] < vertices[right_index][0] && vertices[index][0] > vertices[constrain(index - 1, num_vertices)][0] && vertices[index][0] > vertices[constrain(index + 1, num_vertices)][0]) { // Merge
 			DEBUG("Merge creates: " << start_index << ", " << index << ", " << current->right->index << ", " << close_index);
-			partitions.push_back(get_subpolygon(start_index, index, current->right->index, close_index));
+			partitions.push_back(get_subpolygon(start_index, std::min(index, current->right->index), std::max(index, current->right->index), close_index));
+			DEBUG(start_index << ", " << close_index);
 		}
 
 		if (current == rightmost)
@@ -169,7 +175,7 @@ std::vector<vertices_t> Polygon::partition() {
 	std::cout << partitions.size() << std::endl;
 	for (vertices_t partition : partitions) {
 		for (int i = 0; i < partition.size(); ++i) {
-			std::cout << i << " ";
+			std::cout << "<" << partition[i][0] << ", " << partition[i][1] << "> ";
 		}
 		std::cout << std::endl;
 	}
@@ -181,11 +187,11 @@ void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_i
 	int num_vertices = vertices.size();
 
 #ifdef DEBUG_MODE
-		std::string vertex_string = "";
-		for (int i = 0; i < num_vertices; ++i) {
-			vertex_string += std::to_string(vertices[i][0]) + ", " + std::to_string(vertices[i][1]) + " ";
-		}
-		DEBUG("Triangulating " + vertex_string);
+	std::string vertex_string = "";
+	for (int i = 0; i < num_vertices; ++i) {
+		vertex_string += std::to_string(vertices[i][0]) + ", " + std::to_string(vertices[i][1]) + " ";
+	}
+	DEBUG("Triangulating " + vertex_string);
 #endif
 
 	int left_index = 0; // Index of the leftmost point (start point)
@@ -204,8 +210,6 @@ void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_i
 			right_index = i;
 	}
 
-	DEBUG("Left: " << left_index << "; Right: " << right_index << std::endl);
-
 	int a = left_index; // Index of top vertex
 	int b = left_index; // Index of bottom vertex
 	int current = left_index; // Vertex being analyzed
@@ -217,25 +221,16 @@ void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_i
 	// Sweep through vertices from left to right and triangulate each monotone polygon
 	for (int i = 0; i < num_vertices; ++i) {
 		// Move to next vertex to the right to analyze
-		DEBUG("INITIAL A: " << a << "; B: " << b);
-		DEBUG("TEST A: " << constrain(a+1, num_vertices) << "; B: " << constrain(b-1, num_vertices));
-		DEBUG("A: (" << vertices[constrain(a+1, num_vertices)][0] << ", " << vertices[constrain(a+1, num_vertices)][1] << ")");
-		DEBUG("B: (" << vertices[constrain(b-1, num_vertices)][0] << ", " << vertices[constrain(b-1, num_vertices)][1] << ")");
-		DEBUG("A.x < B.x: " << ((vertices[constrain(a+1, num_vertices)][0] < vertices[constrain(b-1, num_vertices)][0]) == 1 ? "true" : "false"));
 		if ((vertices[constrain(a+1, num_vertices)][0] < vertices[constrain(b-1, num_vertices)][0] || b == right_index) && a != right_index) {
-			DEBUG("Moving top vertex");
 			a = constrain(a+1, num_vertices);
 			last = current;
 			current = a;
 		} else {
-			DEBUG("Moving bottom vertex");
 			b = constrain(b-1, num_vertices);
 			last = current;
 			current = b;
 		}
 		if (last != left_index) remaining_vertices.push_back(last);
-		DEBUG("ADDING TO REMAINING VERTICES: " << last);
-		DEBUG("FINAL A: " << a << "; B: " << b << std::endl);
 
 		/* If the next vertex is on the bottom half of the polygon and the previous
 		 * vertices that don't form triangles are on the top half (or vice-versa),
@@ -312,7 +307,6 @@ void Polygon::gen_gl_data() {
 		int index = 0;
 
 		std::vector<vertices_t> partitions = partition();
-		//exit(0); // TODO: REMOVE THIS WHEN PARTITIONING WORKS!
 		for (vertices_t vertices : partitions) {
 			triangulate(vertices, index, indices_index);
 		}

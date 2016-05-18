@@ -6,6 +6,7 @@
 
 #include "global.h"
 #include "polygon.h"
+#include "body.h"
 #include "gfx.h"
 
 bool keys[1024];
@@ -19,7 +20,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{-32, 32, 0, 1}, {32, 32, 0, 1}, {32, -32, 0, 1}, {-32, -32, 0, 1}}, 0, 0);
+	Polygon poly({{-32, 32, 0, 1}, {32, 32, 0, 1}, {32, -32, 0, 1}, {-32, -32, 0, 1}});
 	poly.translate({256, 128, 0, 1});
 	poly.rotate(2*PI/3, poly.get_pos());
 	gfx::init(3, 3, GL_FALSE);
@@ -76,7 +77,6 @@ int main() {
 
 		// Update view matrix with new camera position
 		view = glm::translate(glm::mat4(), glm::vec3(camera_x, camera_y, 0.0f));
-
 		// Load uniforms
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));

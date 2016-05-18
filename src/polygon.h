@@ -9,9 +9,10 @@
 class Polygon {
 public:
 	using vec4 = glm::vec4;
-	Polygon(std::vector<vec4> vertices, GLfloat x = 0, GLfloat y = 0);
+	Polygon(std::vector<vec4> vertices, glm::vec4 pos = glm::vec4{0.f, 0.f, 0.f, 1.f});
 	~Polygon();
 	void rotate(float ang, const vec4 &axis); 
+	void set_position(const vec4 &pos);
 	void translate(const vec4 &xy);
 	GLfloat* get_vertices();
 	GLuint* get_indices();
@@ -22,8 +23,7 @@ public:
 private:
 	void gen_gl_data();
 
-	GLfloat x;
-	GLfloat y;
+	glm::vec4 pos;
 	std::vector<vec4> vertices;
 	// Cache data
 	bool cache_cur = false; // True if the cache is current

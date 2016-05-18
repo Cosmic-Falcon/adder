@@ -1,15 +1,8 @@
 #include "polygon.h"
 
-Polygon::Polygon(std::vector<glm::vec4> vertices, GLfloat x, GLfloat y) :
-	x{x},
-	y{y},
+Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	vertices{vertices} {
-	glm::vec4 trans_vec;
-	trans_vec[0] = this->x;
-	trans_vec[1] = this->y;
-	trans_vec[2] = 0;
-	trans_vec[3] = 1;
-	translate(trans_vec);
+	set_position(pos);
 	gl_vertices = nullptr;
 	gl_indices = nullptr;
 	std::cout << to_string(vertices) << std::endl;
@@ -30,15 +23,22 @@ void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	for (int i = 0; i < vertices.size(); ++i)
 		vertices[i] = rotmat*vertices[i];
 	translate(axis);
+	cache_cur = false;
+}
+
+void Polygon::set_position(const glm::vec4 &pos) {
+	translate(-this->pos);
+	translate(pos);
 }
 
 void Polygon::translate(const glm::vec4 &xy) {
-	x += xy[0];
-	y += xy[1];
+	pos += xy;
+	pos[3] = 1;
 	for(glm::vec4 &pt : vertices) {
 		pt += xy;
 		pt[3] = 1;
 	}
+	cache_cur = false;
 }
 
 GLfloat* Polygon::get_vertices() {
@@ -66,11 +66,6 @@ int Polygon::get_num_elements() {
 }
 
 glm::vec4 Polygon::get_pos() {
-	glm::vec4 pos;
-	pos[0] = x;
-	pos[1] = y;
-	pos[2] = 0;
-	pos[3] = 1; 
 	return pos;
 }
 

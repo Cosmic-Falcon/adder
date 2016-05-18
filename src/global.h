@@ -9,5 +9,6 @@
 
 #define ERROR(msg) std::cerr << "ERROR! (" << __FILE__ << ":" << __LINE__ << "): " << msg << std::endl;
 
-const float PI = glm::pi<float>(); 
+const float PI = glm::pi<float>();
+const float UNIV_G = 6.6740831313131 * std::pow(10, -3); // Universal Gravitational Constant (x10^-11)
 #endif // GLOBAL_H

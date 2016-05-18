@@ -10,7 +10,7 @@ void Body::update(float dt) {
 	if(_I > 0)
 		_ome += (net_torque / _I)*dt;
 
-	//TODO: Something like _poly.setPosition(_pos[0], _pos[1]);
+	_poly.set_position({_pos[0], _pos[1], 0.f, 1.f});
 
 	if(_forces.size() > 100) {
 		_forces.clear();

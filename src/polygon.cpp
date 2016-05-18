@@ -50,27 +50,18 @@ std::vector<int> Polygon::get_subpolygon(int &top_start, int top_end, int bottom
 	int num_vertices = vertices.size();
 	std::vector<int> subpolygon;
 
-	DEBUG("Top vertices");
 	for (int i = top_start; i != top_end; i = constrain(i + 1, num_vertices)) {
-		DEBUG(i);
 		subpolygon.push_back(i);
 	}
 	subpolygon.push_back(top_end);
-	DEBUG(top_end);
 
-	DEBUG("Bottom vertices");
 	for (int i = bottom_start; i != bottom_end; i = constrain(i + 1, num_vertices)) {
-		DEBUG(i);
 		subpolygon.push_back(i);
 	}
 	subpolygon.push_back(bottom_end);
-	DEBUG(bottom_end);
 
 	top_start = top_end;
 	bottom_end = bottom_start;
-
-	DEBUG("New top start: " << top_start);
-	DEBUG("New bottom start: " << bottom_end);
 
 	return subpolygon;
 }
@@ -140,11 +131,12 @@ std::vector<std::vector<int>> Polygon::partition() {
 
 #ifdef DEBUG_MODE
 	Node *node = root;
-	DEBUG("LEFT TO RIGHT:");
+	std::string ltr_str = "";
 	for (int i = 0; i < num_vertices; ++i) {
-		DEBUG(node->index);
+		ltr_str += std::to_string(node->index) + " ";
 		node = node->right;
 	}
+	DEBUG("LEFT TO RIGHT: " << ltr_str);
 #endif
 
 	// Partition into monotone partitions
@@ -152,18 +144,13 @@ std::vector<std::vector<int>> Polygon::partition() {
 	current = root;
 	int start_index = left_index;
 	int close_index = constrain(left_index - 1, num_vertices);
-	DEBUG("PARTITIONING INTO MONOTONE SUBPOLYGONS");
 	for (int i = 0; i < num_vertices; ++i) {
 		int index = current->index;
 
 		if (vertices[index][0] > vertices[left_index][0] && vertices[index][0] < vertices[constrain(index - 1, num_vertices)][0] && vertices[index][0] < vertices[constrain(index + 1, num_vertices)][0]) { // Split
-			DEBUG("Split creates: " << start_index << ", " << index << ", " << current->left->index << ", " << close_index);
 			partitions.push_back(get_subpolygon(start_index, std::min(index, current->left->index), std::max(index, current->left->index), close_index));
-			DEBUG(start_index << ", " << close_index);
 		} else if (vertices[index][0] < vertices[right_index][0] && vertices[index][0] > vertices[constrain(index - 1, num_vertices)][0] && vertices[index][0] > vertices[constrain(index + 1, num_vertices)][0]) { // Merge
-			DEBUG("Merge creates: " << start_index << ", " << index << ", " << current->right->index << ", " << close_index);
 			partitions.push_back(get_subpolygon(start_index, std::min(index, current->right->index), std::max(index, current->right->index), close_index));
-			DEBUG(start_index << ", " << close_index);
 		}
 
 		if (current == rightmost)
@@ -172,7 +159,6 @@ std::vector<std::vector<int>> Polygon::partition() {
 			current = current->right;
 	}
 
-	DEBUG("Final subpolygon creation: " << start_index << ", " << right_index << ", " << constrain(right_index + 1, num_vertices) << ", " << close_index);
 	partitions.push_back(get_subpolygon(start_index, right_index, constrain(right_index + 1, num_vertices), close_index));
 
 #ifdef DEBUG_MODE
@@ -190,7 +176,6 @@ std::vector<std::vector<int>> Polygon::partition() {
 
 void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
 	int num_vertices = indices.size();
-	DEBUG("TRIANGULATING " << num_vertices << " VERTICES");
 
 #ifdef DEBUG_MODE
 	std::string vertex_string = "";
@@ -241,7 +226,6 @@ void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indi
 		 */
 		DEBUG(indices[a] << ", " << indices[b] << ", " << indices[left_index] << " | " << indices_index << ", " << num_elements);
 		if (indices_index < num_elements && a != left_index && b != left_index) {
-			DEBUG("FAN DATA: " << current << ", " << a << ", " << b << ", " << last);
 			if ((current == a && current-1 != last) || (current == b && current+1 != last)) {
 				DEBUG("Fan");
 #ifdef DEBUG_MODE
@@ -252,8 +236,6 @@ void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indi
 
 				int num_remaining_vertices = remaining_vertices.size();
 				for (int j = 0; j < num_remaining_vertices - 1; ++j) {
-					DEBUG("Triangle around point " << indices[remaining_vertices[j]]);
-
 					// Add vertices in clockwise order
 					int vert_a = remaining_vertices.front();
 					remaining_vertices.erase(remaining_vertices.begin());

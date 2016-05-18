@@ -20,9 +20,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	Polygon poly({{0, 0}, {8, 32}, {0, 64}, {32, 56}, {64, 64}, {56, 32}, {64, 0}, {32, 8}});
-
-	//Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}});
+	//Polygon poly({{0, 0}, {-8, 32}, {0, 64}, {32, 56}, {64, 64}, {72, 32},  {64, 0}, {32, 8}}); // Concave monotone
+	//Polygon poly({{0, 0}, {8, 32}, {0, 64}, {32, 56}, {64, 64}, {56, 32}, {64, 0}, {32, 8}}); // Simple non-monotone
+	Polygon poly({{0, 0}, {0, 72}, {24, 72}, {72, 48}, {24, 24}, {48, 12}, {120, 48}, {72, 72}, {144, 72}, {144, 0}}); // Complex non-monotone
 
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Space Simulator 2017");

@@ -1,4 +1,4 @@
-#include "Body.h"
+#include "body.h"
 
 void Body::update(float dt) {
 	glm::vec2 net_force = std::accumulate(_forces.begin(), _forces.end(), glm::vec2{0.f, 0.f});

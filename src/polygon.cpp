@@ -14,7 +14,7 @@ Polygon::~Polygon() {
 }
 
 void Polygon::rotate(float ang, const glm::vec4 &axis) {
-	if(ang == 0  ) return;
+	if(ang == 0) return;
 	glm::vec4 negated_axis;
 	negated_axis = -axis;
 	negated_axis[3] = 1;
@@ -27,8 +27,10 @@ void Polygon::rotate(float ang, const glm::vec4 &axis) {
 }
 
 void Polygon::set_position(const glm::vec4 &pos) {
-	translate(-this->pos);
-	translate(pos);
+	if(pos != this->pos) {
+		translate(pos - this->pos);
+		cache_cur = false;
+	}
 }
 
 void Polygon::translate(const glm::vec4 &xy) {

@@ -34,7 +34,7 @@ int main() {
 	GLuint shader_program = gfx::create_program({vertex_shader, fragment_shader});
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
-
+	
 	// Create vertex array object
 	// The vertex array object stores the states of the vertex and index buffer
 	// objects defined inside of it, allowing them to be easily reused again.
@@ -62,7 +62,7 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
+	
 	// Transformation matrices
 	glm::mat4 model, view, projection;
 	projection = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f);
@@ -80,7 +80,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		glBindVertexArray(vao);
+		glBindVertexArray(vao);	
 
 		// Render
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

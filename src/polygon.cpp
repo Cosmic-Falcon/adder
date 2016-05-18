@@ -1,6 +1,6 @@
 #include "polygon.h"
 
-Polygon::Polygon(vertices_t vertices, GLfloat x, GLfloat y) {
+Polygon::Polygon(Vertices vertices, GLfloat x, GLfloat y) {
 	this->x = x;
 	this->y = y;
 	this->vertices = vertices;
@@ -45,25 +45,25 @@ int constrain(int index, int bound) {
 	return index;
 }
 
-vertices_t Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
+std::vector<int> Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
 	DEBUG("SUBPOLYGON: " << top_start << ", " << top_end << ", " << bottom_start << ", " << bottom_end);
 	int num_vertices = vertices.size();
-	vertices_t subpolygon;
+	std::vector<int> subpolygon;
 
 	DEBUG("Top vertices");
 	for (int i = top_start; i != top_end; i = constrain(i + 1, num_vertices)) {
 		DEBUG(i);
-		subpolygon.push_back(vertices[i]);
+		subpolygon.push_back(i);
 	}
-	subpolygon.push_back(vertices[top_end]);
+	subpolygon.push_back(top_end);
 	DEBUG(top_end);
 
 	DEBUG("Bottom vertices");
 	for (int i = bottom_start; i != bottom_end; i = constrain(i + 1, num_vertices)) {
 		DEBUG(i);
-		subpolygon.push_back(vertices[i]);
+		subpolygon.push_back(i);
 	}
-	subpolygon.push_back(vertices[bottom_end]);
+	subpolygon.push_back(bottom_end);
 	DEBUG(bottom_end);
 
 	top_start = top_end;
@@ -75,7 +75,7 @@ vertices_t Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start
 	return subpolygon;
 }
 
-std::vector<vertices_t> Polygon::partition() {
+std::vector<std::vector<int>> Polygon::partition() {
 	int num_vertices = vertices.size();
 
 	struct Node {
@@ -97,6 +97,7 @@ std::vector<vertices_t> Polygon::partition() {
 	auto ltr_compare = [&](int &lhs, int &rhs) -> bool { return vertices[lhs][0] > vertices[rhs][0]; };
 	std::priority_queue<int, std::vector<int>, decltype(ltr_compare)> ltr_order(ltr_compare);
 
+	// Get leftmost and rightmost vertices and order vertices from left-to-right in ltr_order
 	int left_index = 0;
 	int right_index = 0;
 	ltr_order.push(0);
@@ -108,6 +109,7 @@ std::vector<vertices_t> Polygon::partition() {
 			right_index = i;
 	}
 
+	// Construct linked list of vertices in order of placement in the polygon
 	Node *root = new Node(left_index, nullptr, nullptr, nullptr, nullptr);
 	Node *rightmost = nullptr;
 	Node *current = root;
@@ -122,6 +124,7 @@ std::vector<vertices_t> Polygon::partition() {
 	current->next = root;
 	root->prev = current;
 
+	// Add links to left and right vertices in the linked list
 	Node *next = root;
 	for (int i = 0; i < num_vertices; ++i) {
 		current = next;
@@ -144,8 +147,8 @@ std::vector<vertices_t> Polygon::partition() {
 	}
 #endif
 
-	std::vector<vertices_t> partitions;
-
+	// Partition into monotone partitions
+	std::vector<std::vector<int>> partitions;
 	current = root;
 	int start_index = left_index;
 	int close_index = constrain(left_index - 1, num_vertices);
@@ -172,24 +175,27 @@ std::vector<vertices_t> Polygon::partition() {
 	DEBUG("Final subpolygon creation: " << start_index << ", " << right_index << ", " << constrain(right_index + 1, num_vertices) << ", " << close_index);
 	partitions.push_back(get_subpolygon(start_index, right_index, constrain(right_index + 1, num_vertices), close_index));
 
-	std::cout << partitions.size() << std::endl;
-	for (vertices_t partition : partitions) {
+#ifdef DEBUG_MODE
+	DEBUG("Created " << partitions.size() << " partitions:");
+	for (auto partition : partitions) {
 		for (int i = 0; i < partition.size(); ++i) {
-			std::cout << "<" << partition[i][0] << ", " << partition[i][1] << "> ";
+			std::cout << partition[i] << " ";
 		}
 		std::cout << std::endl;
 	}
+#endif
 
 	return partitions;
 }
 
-void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_index) {
-	int num_vertices = vertices.size();
+void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
+	int num_vertices = indices.size();
+	DEBUG("TRIANGULATING " << num_vertices << " VERTICES");
 
 #ifdef DEBUG_MODE
 	std::string vertex_string = "";
 	for (int i = 0; i < num_vertices; ++i) {
-		vertex_string += std::to_string(vertices[i][0]) + ", " + std::to_string(vertices[i][1]) + " ";
+		vertex_string += std::to_string(indices[i]) + " ";
 	}
 	DEBUG("Triangulating " + vertex_string);
 #endif
@@ -198,15 +204,10 @@ void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_i
 	int right_index = 0; // Index of the rightmost point (end point)
 
 	for (int i = 0; i < num_vertices; ++i) {
-		// Format vertices for OpenGL
-		gl_vertices[(i + start_index) * 3] = vertices[i][0];
-		gl_vertices[(i + start_index) * 3 + 1] = vertices[i][1];
-		gl_vertices[(i + start_index) * 3 + 2] = 0.0f;
-		
 		// Find leftmost and rightmost vertices
-		if (vertices[i][0] < vertices[left_index][0])
+		if (vertices[indices[i]][0] < vertices[indices[left_index]][0])
 			left_index = i;
-		else if (vertices[i][0] > vertices[right_index][0])
+		else if (vertices[indices[i]][0] > vertices[indices[right_index]][0])
 			right_index = i;
 	}
 
@@ -221,7 +222,7 @@ void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_i
 	// Sweep through vertices from left to right and triangulate each monotone polygon
 	for (int i = 0; i < num_vertices; ++i) {
 		// Move to next vertex to the right to analyze
-		if ((vertices[constrain(a+1, num_vertices)][0] < vertices[constrain(b-1, num_vertices)][0] || b == right_index) && a != right_index) {
+		if ((vertices[indices[constrain(a+1, num_vertices)]][0] < vertices[indices[constrain(b-1, num_vertices)]][0] || b == right_index) && a != right_index) {
 			a = constrain(a+1, num_vertices);
 			last = current;
 			current = a;
@@ -238,60 +239,89 @@ void Polygon::triangulate(vertices_t &vertices, int &start_index, int &indices_i
 		 * of triangles shaped similarly to a chinese fan. If a fan of triangles is
 		 * formed, add each of the triangles in the fan
 		 */
+		DEBUG(indices[a] << ", " << indices[b] << ", " << indices[left_index] << " | " << indices_index << ", " << num_elements);
 		if (indices_index < num_elements && a != left_index && b != left_index) {
+			DEBUG("FAN DATA: " << current << ", " << a << ", " << b << ", " << last);
 			if ((current == a && current-1 != last) || (current == b && current+1 != last)) {
 				DEBUG("Fan");
 #ifdef DEBUG_MODE
-					std::string str = "";
-					for (auto i : remaining_vertices) str += std::to_string(i) + " ";
-					DEBUG("Remaining vertices: " << str);
+				std::string str = "";
+				for (auto i : remaining_vertices) str += std::to_string(indices[i]) + " ";
+				DEBUG("Remaining vertices: " << str);
 #endif
 
 				int num_remaining_vertices = remaining_vertices.size();
 				for (int j = 0; j < num_remaining_vertices - 1; ++j) {
-					DEBUG("Triangle around point " << remaining_vertices[j]);
-					gl_indices[indices_index++] = current;
+					DEBUG("Triangle around point " << indices[remaining_vertices[j]]);
 
 					// Add vertices in clockwise order
 					int vert_a = remaining_vertices.front();
 					remaining_vertices.erase(remaining_vertices.begin());
 					int vert_b = remaining_vertices.front();
-					if (vertices[vert_a][1] < vertices[vert_b][1]) {
-						gl_indices[indices_index++] = vert_a;
-						gl_indices[indices_index++] = vert_b;
+					if (current == vert_a || current == vert_b) {
+						DEBUG("ABORTING FAN: " << indices[current] << ", " << indices[vert_a] << ", " << indices[vert_b]);
+						break;
+					}
+
+					gl_indices[indices_index++] = indices[current];
+					if (vertices[indices[vert_a]][1] < vertices[indices[vert_b]][1]) {
+						gl_indices[indices_index++] = indices[vert_a];
+						gl_indices[indices_index++] = indices[vert_b];
 					} else {
-						gl_indices[indices_index++] = vert_b;
-						gl_indices[indices_index++] = vert_a;
+						gl_indices[indices_index++] = indices[vert_b];
+						gl_indices[indices_index++] = indices[vert_a];
 					}
 
 					DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1]);
 				}
 #ifdef DEBUG_MODE
-					std::cout << std::endl;
+				str = "";
+				for (auto i : remaining_vertices) str += std::to_string(indices[i]) + " ";
+				DEBUG("Remaining vertices: " << str);
+
+				std::cout << std::endl;
 #endif
 			} else { // If a fan is not formed, check if a triangular ear is formed
-				double old_slope = double(vertices[constrain(current-2, num_vertices)][1] - vertices[constrain(current-1, num_vertices)][1]) / double(vertices[constrain(current-2, num_vertices)][0] - vertices[constrain(current-1, num_vertices)][0]);
-				double new_slope = double(vertices[constrain(current-2, num_vertices)][1] - vertices[constrain(current, num_vertices)][1]) / double(vertices[constrain(current-2, num_vertices)][0] - vertices[constrain(current, num_vertices)][0]);
+				if (std::find(remaining_vertices.begin(), remaining_vertices.end(), constrain(current-2, num_vertices)) != remaining_vertices.end()) {
+					double old_slope = double(vertices[indices[constrain(current-2, num_vertices)]][1] - vertices[indices[constrain(current-1, num_vertices)]][1]) /
+						double(vertices[indices[constrain(current-2, num_vertices)]][0] - vertices[indices[constrain(current-1, num_vertices)]][0]);
+					double new_slope = double(vertices[indices[constrain(current-2, num_vertices)]][1] - vertices[indices[constrain(current, num_vertices)]][1]) /
+						double(vertices[indices[constrain(current-2, num_vertices)]][0] - vertices[indices[constrain(current, num_vertices)]][0]);
 
-				if (current == a && new_slope < old_slope) { // Ear on top
-					DEBUG("Upper ear around " << current);
-					gl_indices[indices_index++] = current;
-					gl_indices[indices_index + 2] = remaining_vertices.back();
-					remaining_vertices.pop_back();
-					gl_indices[indices_index++] = remaining_vertices.back();
-					++indices_index;
-					DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
-				} else if (current == b && new_slope > old_slope) { // Ear on bottom
-					DEBUG("Lower ear around " << current);
-					gl_indices[indices_index++] = current;
-					gl_indices[indices_index++] = remaining_vertices.back();
-					remaining_vertices.pop_back();
-					gl_indices[indices_index++] = remaining_vertices.back();
-					DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
+					if (current == a && new_slope < old_slope) { // Ear on top
+						DEBUG("Upper ear around " << indices[current]);
+						gl_indices[indices_index++] = indices[current];
+						gl_indices[indices_index + 2] = indices[remaining_vertices.back()];
+						remaining_vertices.pop_back();
+						gl_indices[indices_index++] = indices[remaining_vertices.back()];
+						++indices_index;
+						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
+					} else if (current == b && new_slope > old_slope) { // Ear on bottom
+						DEBUG("Lower ear around " << indices[current]);
+						gl_indices[indices_index++] = indices[current];
+						gl_indices[indices_index++] = indices[remaining_vertices.back()];
+						remaining_vertices.pop_back();
+						gl_indices[indices_index++] = indices[remaining_vertices.back()];
+						DEBUG("Resultant indices: " << gl_indices[indices_index - 3] << ", " << gl_indices[indices_index - 2] << ", " << gl_indices[indices_index - 1] << std::endl);
+					}
 				}
 			}
 		}
 	}
+
+#ifdef DEBUG_MODE
+			std::string indices_str = "";
+			for (int i = 0; i < (num_vertices - 2) * 3; ++i) {
+				indices_str += "(";
+				indices_str += std::to_string(gl_indices[start_index + i]) + ", ";
+				indices_str += std::to_string(gl_indices[start_index + (++i)]) + ", ";
+				indices_str += std::to_string(gl_indices[start_index + (++i)]);
+				indices_str += ") ";
+			}
+			DEBUG("Partition indices: " << indices_str << std::endl);
+#endif
+
+	start_index += num_vertices;
 }
 
 void Polygon::gen_gl_data() {
@@ -300,15 +330,22 @@ void Polygon::gen_gl_data() {
 		num_elements = (num_vertices - 2) * 3;
 		
 		if (gl_vertices) delete[] gl_vertices;
-		if (gl_indices) delete[] gl_indices;
 		gl_vertices = new GLfloat[num_vertices * 3];
+		for (int i = 0; i < num_vertices; ++i) {
+			// Format vertices for OpenGL
+			gl_vertices[(i) * 3] = vertices[i][0];
+			gl_vertices[(i) * 3 + 1] = vertices[i][1];
+			gl_vertices[(i) * 3 + 2] = 0.0f;
+		}
+
+		if (gl_indices) delete[] gl_indices;
 		gl_indices = new GLuint[(num_vertices - 2) * 3];
 		int indices_index = 0; // Index of gl_indices to add to
 		int index = 0;
 
-		std::vector<vertices_t> partitions = partition();
-		for (vertices_t vertices : partitions) {
-			triangulate(vertices, index, indices_index);
+		std::vector<std::vector<int>> partitions = partition();
+		for (std::vector<int> indices : partitions) {
+			triangulate(indices, index, indices_index);
 		}
 
 		vertices_size = sizeof(GLfloat) * num_vertices * 3;
@@ -316,15 +353,15 @@ void Polygon::gen_gl_data() {
 		cache_cur = true;
 
 #ifdef DEBUG_MODE
-			std::string indices = "";
+			std::string indices_str = "";
 			for (int i = 0; i < (num_vertices - 2) * 3; ++i) {
-				indices += "(";
-				indices += std::to_string(gl_indices[i]) + ", ";
-				indices += std::to_string(gl_indices[++i]) + ", ";
-				indices += std::to_string(gl_indices[++i]);
-				indices += ") ";
+				indices_str += "(";
+				indices_str += std::to_string(gl_indices[i]) + ", ";
+				indices_str += std::to_string(gl_indices[++i]) + ", ";
+				indices_str += std::to_string(gl_indices[++i]);
+				indices_str += ") ";
 			}
-			DEBUG("Indices: " << indices << std::endl);
+			DEBUG("Indices: " << indices_str << std::endl);
 #endif
 	}
 }

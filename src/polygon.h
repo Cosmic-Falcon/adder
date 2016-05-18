@@ -1,18 +1,18 @@
 #ifndef GEO_POLYGON_H
 #define GEO_POLYGON_H
 
+#include <algorithm>
 #include <array>
 #include <queue>
 #include <vector>
 
 #include "gfx.h"
 
-using vertex_t = std::array<GLfloat, 2>;
-using vertices_t = std::vector<vertex_t>;
+using Vertices = std::vector<std::array<GLfloat, 2>>;
 
 class Polygon {
 public:
-	Polygon(vertices_t vertices, GLfloat x=0, GLfloat y=0);
+	Polygon(Vertices vertices, GLfloat x=0, GLfloat y=0);
 	~Polygon();
 
 	GLfloat* get_vertices();
@@ -21,14 +21,14 @@ public:
 	int get_indices_size();
 	int get_num_elements();
 private:
-	vertices_t get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end);
-	std::vector<vertices_t> partition();
-	void triangulate(vertices_t &vertices, int &start_index, int &indices_index);
+	std::vector<int> get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end);
+	std::vector<std::vector<int>> partition();
+	void triangulate(std::vector<int> &indices, int &start_index, int &indices_index);
 	void gen_gl_data();
 
 	GLfloat x;
 	GLfloat y;
-	vertices_t vertices;
+	Vertices vertices;
 
 	// Cache data
 	bool cache_cur = false; // True if the cache is current

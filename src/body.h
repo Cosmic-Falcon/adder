@@ -19,8 +19,8 @@ private:
 	glm::vec2 _ome;                  // Angular Velocity
 public:
 	void update(float dt);
-	void Body::add_force(const glm::vec2 &force);
-	void Body::add_torque(const float &torque);
+	void add_force(const glm::vec2 &force);
+	void add_torque(const float &torque);
 
 	float mass() const { return _mass; };
 	float angular_mass() const { return _I; };

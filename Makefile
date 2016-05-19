@@ -1,8 +1,8 @@
 BIN = space_simulator
-OBJS = src/main.cpp src/gfx.cpp src/polygon.cpp
-
+OBJ_DIR = obj
+OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/gfx.o $(OBJ_DIR)/polygon.o $(OBJ_DIR)/body.o $(OBJ_DIR)/vector_fns.o
 CC = g++
-CFLAGS = -std=c++14 -O2
+CFLAGS = -std=c++14 -O2 -c
 
 INCLUDE_DIRECTORIES = -Iinclude
 LIBRARY_DIRECTORIES = -Llib
@@ -10,10 +10,28 @@ LIBRARIES = -lSOIL -lGL -lglfw -lGLEW
 
 .PHONY : all
 all: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(INCLUDE_DIRECTORIES) $(LIBRARY_DIRECTORIES) $(LIBRARIES) -o $(BIN)
+	$(CC) $(OBJS) $(LIBRARY_DIRECTORIES) $(LIBRARIES) -o $(BIN)
 
-debug: $(OBJS)
-	$(CC) $(CFLAGS) -g -D DEBUG_MODE $(OBJS) $(INCLUDE_DIRECTORIES) $(LIBRARY_DIRECTORIES) $(LIBRARIES) -o $(BIN)
+debug: $(OBJS) 
+	$(CC) -g -D DEBUG_MODE $(OBJS) $(LIBRARY_DIRECTORIES) $(LIBRARIES) -o $(BIN)
+
+$(OBJ_DIR)/main.o: src/main.cpp
+	$(CC) $(CFLAGS) src/main.cpp $(INCLUDE_DIRECTORIES) -o $(OBJ_DIR)/main.o
+
+$(OBJ_DIR)/gfx.o: src/gfx.cpp
+	$(CC) $(CFLAGS) src/gfx.cpp $(INCLUDE_DIRECTORIES) -o $(OBJ_DIR)/gfx.o
+
+$(OBJ_DIR)/polygon.o: src/polygon.cpp
+	$(CC) $(CFLAGS) src/polygon.cpp $(INCLUDE_DIRECTORIES) -o $(OBJ_DIR)/polygon.o
+
+$(OBJ_DIR)/body.o: src/body.cpp
+	$(CC) $(CFLAGS) src/body.cpp $(INCLUDE_DIRECTORIES) -o $(OBJ_DIR)/body.o
+
+$(OBJ_DIR)/vector_fns.o: src/vector_fns.cpp
+	$(CC) $(CFLAGS) src/vector_fns.cpp $(INCLUDE_DIRECTORIES) -o $(OBJ_DIR)/vector_fns.o
 
 run: all
 	./$(BIN)
+
+clean:
+	rm $(BIN) $(OBJS)

@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "global.h"
+#include "vector_fns.h"
 #include "polygon.h"
 #include "body.h"
 #include "gfx.h"

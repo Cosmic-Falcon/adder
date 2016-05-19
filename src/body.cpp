@@ -14,10 +14,12 @@ void Body::update(float dt) {
 
 	if(_forces.size() > 100) {
 		_forces.clear();
+		_forces.reserve(100);
 		_forces.push_back(net_force);
 	}
 	if(_torques.size() > 100) {
 		_torques.clear();
+		_forces.reserve(100);
 		_torques.push_back(net_torque);
 	}
 }

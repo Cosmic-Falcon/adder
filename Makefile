@@ -8,12 +8,12 @@ INCLUDE_DIRECTORIES = -Iinclude
 LIBRARY_DIRECTORIES = -Llib
 LIBRARIES = -lSOIL -lGL -lglfw -lGLEW
 
-.PHONY : all
+.PHONY : all clean
 all: $(OBJS)
 	$(CC) $(OBJS) $(LIBRARY_DIRECTORIES) $(LIBRARIES) -o $(BIN)
 
-debug: $(OBJS) 
-	$(CC) -g -D DEBUG_MODE $(OBJS) $(LIBRARY_DIRECTORIES) $(LIBRARIES) -o $(BIN)
+debug: CFLAGS += -g -D DEBUG_MODE
+debug: clean all
 
 $(OBJ_DIR)/main.o: src/main.cpp
 	$(CC) $(CFLAGS) src/main.cpp $(INCLUDE_DIRECTORIES) -o $(OBJ_DIR)/main.o

@@ -1,4 +1,5 @@
 include
 lib
+obj/*.o
 
 space_simulator

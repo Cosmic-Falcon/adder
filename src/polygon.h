@@ -15,13 +15,14 @@ public:
 	Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos = glm::vec4{0.f, 0.f, 0.f, 1.f});
 	~Polygon();
 
-	void rotate(float ang, const glm::vec4 &axis); 
+	void rotate(float ang, const glm::vec4 &axis);
 	void set_position(const glm::vec4 &pos);
 	void translate(const glm::vec4 &xy);
 
 	glm::vec4 position();
 	std::vector<glm::vec4> vertices();
 
+	bool is_convex();
 	GLfloat* get_gl_vertices();
 	GLuint* get_gl_indices();
 	int get_gl_vertices_size();
@@ -44,6 +45,7 @@ private:
 	int _verts_size; // Size of _gl_verts in bytes
 	int _indices_size; // Size of _gl_indices in bytes
 	int _num_elmns; // Number of elements
+	bool _is_convex;
 };
 
 std::string to_string(const std::vector<glm::vec4> &vertices);

@@ -6,35 +6,26 @@ Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	_gl_verts = nullptr;
 	_gl_indices = nullptr;
 
-	//determine whether is convex
+	// Determine whether polygon is convex
 	int sign = 0;
+	glm::vec3 a{vertices.front()[0] - vertices.back()[0], vertices.front()[1] - vertices.back()[1], 0.f};
+	glm::vec3 b{vertices[1][0] - vertices.front()[0], vertices[1][1] - vertices.front()[1], 0.f};
+	float z = glm::cross(a, b)[2];
+	sign = ((z > 0) ? 1 : -1);
 	bool determined_convex = false;
 	for(int i = 0; i < vertices.size() - 2; ++i) {
 		glm::vec3 a{vertices[i + 1][0] - vertices[i][0], vertices[i + 1][1] - vertices[i][1], 0.f};
 		glm::vec3 b{vertices[i + 2][0] - vertices[i + 1][0], vertices[i + 2][1] - vertices[i + 1][1], 0.f};
 		float z = glm::cross(a, b)[2];
-		if(sign == 0) {
-			sign = (z > 0) ? 1 : -1;
-		} else {
-			if(((z > 0) ? 1 : -1) == -sign) {
-				_is_convex = false;
-				determined_convex = true;
-				break;
-			}
+		int this_sign = ((z > 0) ? 1 : -1);
+		if(sign != this_sign) {
+			_is_convex = false;
+			determined_convex = true;
+			break;
 		}
 	}
 	if(!determined_convex) {
-		//test first and last side
-		glm::vec3 a{vertices.front()[0] - vertices.back()[0], vertices.front()[1] - vertices.back()[1], 0.f};
-		glm::vec3 b{vertices[1][0] - vertices.front()[0], vertices[1][1] - vertices.front()[1], 0.f};
-		float z = glm::cross(a, b)[2];
-		if(((z > 0) ? 1 : -1) == -sign) {
-			_is_convex = false;
-			determined_convex = true;
-		} else {
-			_is_convex = true;
-			determined_convex = true;
-		}
+		_is_convex = true;
 	}
 }
 

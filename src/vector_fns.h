@@ -7,7 +7,7 @@
 
 #include "global.h"
 
-namespace krypt {
+namespace ape {
 	glm::vec4 normal(const glm::vec4 &vec);
 }
 

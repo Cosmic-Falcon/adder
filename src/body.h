@@ -6,7 +6,7 @@
 
 #include "polygon.h"
 
-namespace krypt {
+namespace ape {
 	class Body {
 	private:
 		float _mass;

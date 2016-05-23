@@ -1,4 +1,4 @@
-BIN := krypton
+BIN := argon
 CC := g++
 CFLAGS := -std=c++14 -O2 -c
 

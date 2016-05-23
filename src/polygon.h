@@ -7,9 +7,9 @@
 #include <vector>
 
 #include "gfx.h"
-#include "krypton_constants.h"
+#include "argon_constants.h"
 
-namespace krypt {
+namespace ape {
 	using Vertices = std::vector<glm::vec4>;
 
 	class Polygon {

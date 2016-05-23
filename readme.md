@@ -1,6 +1,7 @@
-Space Simulator ~~2015~~ ~~2016~~ 2017!
-=======================================
-It's space!
+Krypton Physics Engine
+======================
+Why? Because neutral Krypton in its ground state has a complete 3p subshell,
+and this engine has **P**ixel **P**erfect **P**hysics (3P).
 
 Requirements
 ------------

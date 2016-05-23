@@ -1,6 +1,6 @@
 #include "body.h"
 
-void Body::update(float dt) {
+void krypt::Body::update(float dt) {
 	glm::vec2 net_force = std::accumulate(_forces.begin(), _forces.end(), glm::vec2{0.f, 0.f});
 	float net_torque = std::accumulate(_torques.begin(), _torques.end(), 0.f);
 	_pos += _vel*dt;
@@ -24,10 +24,10 @@ void Body::update(float dt) {
 	}
 }
 
-void Body::add_force(const glm::vec2 &force) {
+void krypt::Body::add_force(const glm::vec2 &force) {
 	_forces.push_back(force);
 }
 
-void Body::add_torque(const float &torque) {
+void krypt::Body::add_torque(const float &torque) {
 	_torques.push_back(torque);
 }

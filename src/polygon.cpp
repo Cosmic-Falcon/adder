@@ -1,6 +1,6 @@
 #include "polygon.h"
 
-Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
+krypt::Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	_verts{vertices} {
 	set_position(pos);
 	_gl_verts = nullptr;
@@ -29,12 +29,12 @@ Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	}
 }
 
-Polygon::~Polygon() {
+krypt::Polygon::~Polygon() {
 	delete[] _gl_verts;
 	delete[] _gl_indices;
 }
 
-void Polygon::rotate(float ang, const glm::vec4 &axis) {
+void krypt::Polygon::rotate(float ang, const glm::vec4 &axis) {
 	if(ang == 0) return;
 
 	glm::vec4 negated_axis = -axis;
@@ -48,14 +48,14 @@ void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	_cache_cur = false;
 }
 
-void Polygon::set_position(const glm::vec4 &pos) {
+void krypt::Polygon::set_position(const glm::vec4 &pos) {
 	if(pos != _pos) {
 		translate(pos - _pos);
 		_cache_cur = false;
 	}
 }
 
-void Polygon::translate(const glm::vec4 &xy) {
+void krypt::Polygon::translate(const glm::vec4 &xy) {
 	_pos += xy;
 	_pos[3] = 1;
 	for(glm::vec4 &pt : _verts) {
@@ -65,43 +65,43 @@ void Polygon::translate(const glm::vec4 &xy) {
 	_cache_cur = false;
 }
 
-glm::vec4 Polygon::position() {
+glm::vec4 krypt::Polygon::position() {
 	return _pos;
 }
 
-std::vector<glm::vec4> Polygon::vertices() {
+std::vector<glm::vec4> krypt::Polygon::vertices() {
 	return _verts;
 }
 
-bool Polygon::is_convex() {
+bool krypt::Polygon::is_convex() {
 	return _is_convex;
 }
 
-GLfloat* Polygon::get_gl_vertices() {
+GLfloat* krypt::Polygon::get_gl_vertices() {
 	gen_gl_data();
 	return _gl_verts;
 }
 
-GLuint* Polygon::get_gl_indices() {
+GLuint* krypt::Polygon::get_gl_indices() {
 	gen_gl_data();
 	return _gl_indices;
 }
 
-int Polygon::get_gl_vertices_size() {
+int krypt::Polygon::get_gl_vertices_size() {
 	gen_gl_data();
 	return _verts_size;
 }
 
-int Polygon::get_gl_indices_size() {
+int krypt::Polygon::get_gl_indices_size() {
 	gen_gl_data();
 	return _indices_size;
 }
 
-int Polygon::get_num_elements() {
+int krypt::Polygon::get_num_elements() {
 	return _num_elmns;
 }
 
-glm::vec4 Polygon::get_pos() {
+glm::vec4 krypt::Polygon::get_pos() {
 	return _pos;
 }
 int constrain(int index, int bound) {
@@ -111,7 +111,7 @@ int constrain(int index, int bound) {
 	return index;
 }
 
-std::vector<int> Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
+std::vector<int> krypt::Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
 	DEBUG("SUBPOLYGON: " << top_start << ", " << top_end << ", " << bottom_start << ", " << bottom_end);
 	int num_vertices = _verts.size();
 	std::vector<int> subpolygon;
@@ -132,7 +132,7 @@ std::vector<int> Polygon::get_subpolygon(int &top_start, int top_end, int bottom
 	return subpolygon;
 }
 
-std::vector<std::vector<int>> Polygon::partition() {
+std::vector<std::vector<int>> krypt::Polygon::partition() {
 	int num_vertices = _verts.size();
 
 	struct Node {
@@ -240,7 +240,7 @@ std::vector<std::vector<int>> Polygon::partition() {
 	return partitions;
 }
 
-void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
+void krypt::Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
 	int num_vertices = indices.size();
 
 #ifdef DEBUG_MODE
@@ -372,8 +372,8 @@ void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indi
 	start_index += num_vertices;
 }
 
-void Polygon::gen_gl_data() {
-	if(!_cache_cur) {
+void krypt::Polygon::gen_gl_data() {
+	if (!_cache_cur) {
 		int num_vertices = _verts.size();
 		_num_elmns = (num_vertices - 2) * 3;
 

@@ -1,4 +1,4 @@
-BIN := space_simulator
+BIN := krypton
 CC := g++
 CFLAGS := -std=c++14 -O2 -c
 

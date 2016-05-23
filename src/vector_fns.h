@@ -7,6 +7,8 @@
 
 #include "global.h"
 
-glm::vec4 normal(const glm::vec4 &vec);
+namespace krypt {
+	glm::vec4 normal(const glm::vec4 &vec);
+}
 
 #endif // VECTOR_FUNCTIONS_H

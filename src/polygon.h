@@ -40,8 +40,15 @@ namespace krypt {
 
 		glm::vec4 _pos;
 		std::vector<glm::vec4> _verts;
+
 		// Cache data
-		bool _cache_cur = false; // True if the cache is current
+		struct CacheStatus {
+			// True if the cache is up to date
+			bool gl_data = false;
+			bool is_convex = false;
+		};
+		CacheStatus _cache_status;
+
 		GLfloat* _gl_verts;
 		GLuint* _gl_indices;
 		int _verts_size; // Size of _gl_verts in bytes

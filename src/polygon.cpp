@@ -5,28 +5,6 @@ krypt::Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	set_position(pos);
 	_gl_verts = nullptr;
 	_gl_indices = nullptr;
-
-	// Determine whether polygon is convex
-	int sign = 0;
-	glm::vec3 a{vertices.front()[0] - vertices.back()[0], vertices.front()[1] - vertices.back()[1], 0.f};
-	glm::vec3 b{vertices[1][0] - vertices.front()[0], vertices[1][1] - vertices.front()[1], 0.f};
-	float z = glm::cross(a, b)[2];
-	sign = ((z > 0) ? 1 : -1);
-	bool determined_convex = false;
-	for(int i = 0; i < vertices.size() - 2; ++i) {
-		glm::vec3 a{vertices[i + 1][0] - vertices[i][0], vertices[i + 1][1] - vertices[i][1], 0.f};
-		glm::vec3 b{vertices[i + 2][0] - vertices[i + 1][0], vertices[i + 2][1] - vertices[i + 1][1], 0.f};
-		float z = glm::cross(a, b)[2];
-		int this_sign = ((z > 0) ? 1 : -1);
-		if(sign != this_sign) {
-			_is_convex = false;
-			determined_convex = true;
-			break;
-		}
-	}
-	if(!determined_convex) {
-		_is_convex = true;
-	}
 }
 
 krypt::Polygon::~Polygon() {
@@ -45,13 +23,13 @@ void krypt::Polygon::rotate(float ang, const glm::vec4 &axis) {
 	for(int i = 0; i < _verts.size(); ++i)
 		_verts[i] = rotmat*_verts[i];
 	translate(axis);
-	_cache_cur = false;
+	_cache_status = CacheStatus();
 }
 
 void krypt::Polygon::set_position(const glm::vec4 &pos) {
 	if(pos != _pos) {
 		translate(pos - _pos);
-		_cache_cur = false;
+		_cache_status = CacheStatus();
 	}
 }
 
@@ -62,7 +40,7 @@ void krypt::Polygon::translate(const glm::vec4 &xy) {
 		pt += xy;
 		pt[3] = 1;
 	}
-	_cache_cur = false;
+	_cache_status = CacheStatus();
 }
 
 glm::vec4 krypt::Polygon::position() {
@@ -74,6 +52,29 @@ std::vector<glm::vec4> krypt::Polygon::vertices() {
 }
 
 bool krypt::Polygon::is_convex() {
+	if(!_cache_status.is_convex) {
+		_cache_status.is_convex = true;
+
+		glm::vec3 a{_verts.front()[0] - _verts.back()[0], _verts.front()[1] - _verts.back()[1], 0.f};
+		glm::vec3 b{_verts[1][0] - _verts.front()[0], _verts[1][1] - _verts.front()[1], 0.f};
+
+		float z = glm::cross(a, b)[2];
+		int sign = ((z > 0) ? 1 : -1);
+
+		_is_convex = true;
+
+		for(int i = 0; i < _verts.size() - 2; ++i) {
+			glm::vec3 a{_verts[i + 1][0] - _verts[i][0], _verts[i + 1][1] - _verts[i][1], 0.f};
+			glm::vec3 b{_verts[i + 2][0] - _verts[i + 1][0], _verts[i + 2][1] - _verts[i + 1][1], 0.f};
+			float z = glm::cross(a, b)[2];
+			int this_sign = ((z > 0) ? 1 : -1);
+			if(sign != this_sign) {
+				_is_convex = false;
+				break;
+			}
+		}
+	}
+
 	return _is_convex;
 }
 
@@ -373,7 +374,9 @@ void krypt::Polygon::triangulate(std::vector<int> &indices, int &start_index, in
 }
 
 void krypt::Polygon::gen_gl_data() {
-	if (!_cache_cur) {
+	if (!_cache_status.gl_data) {
+		_cache_status.gl_data = true;
+
 		int num_vertices = _verts.size();
 		_num_elmns = (num_vertices - 2) * 3;
 
@@ -398,7 +401,6 @@ void krypt::Polygon::gen_gl_data() {
 
 		_verts_size = sizeof(GLfloat) * num_vertices * 3;
 		_indices_size = sizeof(GLint) * (num_vertices - 2) * 3;
-		_cache_cur = true;
 
 #ifdef DEBUG_MODE
 		std::string indices_str = "";

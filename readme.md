@@ -1,6 +1,6 @@
-Krypton Physics Engine
+Argon Physics Engine
 ======================
-Why? Because neutral Krypton in its ground state has a complete 3p subshell,
+Why? Because neutral Argon in its ground state has a complete 3p subshell,
 and this engine has **P**ixel **P**erfect **P**hysics (3P).
 
 Requirements

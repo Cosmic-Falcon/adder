@@ -1,6 +1,6 @@
 #include "body.h"
 
-ape::Body::Body(float mass, float moment_of_inertia, float charge, Polygon poly):
+adder::Body::Body(float mass, float moment_of_inertia, float charge, Polygon poly):
 	_mass{mass},
 	_I{moment_of_inertia},
 	_q{charge},
@@ -9,7 +9,7 @@ ape::Body::Body(float mass, float moment_of_inertia, float charge, Polygon poly)
 
 }
 
-void ape::Body::update(float dt) {
+void adder::Body::update(float dt) {
 	glm::vec2 net_force = std::accumulate(_forces.begin(), _forces.end(), glm::vec2{0.f, 0.f});
 	float net_torque = std::accumulate(_torques.begin(), _torques.end(), 0.f);
 	_pos += _vel*dt;
@@ -33,10 +33,10 @@ void ape::Body::update(float dt) {
 	}
 }
 
-void ape::Body::add_force(const glm::vec2 &force) {
+void adder::Body::add_force(const glm::vec2 &force) {
 	_forces.push_back(force);
 }
 
-void ape::Body::add_torque(const float &torque) {
+void adder::Body::add_torque(const float &torque) {
 	_torques.push_back(torque);
 }

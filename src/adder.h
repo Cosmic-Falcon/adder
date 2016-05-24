@@ -1,5 +1,5 @@
-#ifndef ARGON_H
-#define ARGON_H
+#ifndef ADDER_H
+#define ADDER_H
 
 /*    $$   $$$$$ $$    $$ $$$$$ $$$$$$ $$$$  $$  $$     $$$$$  $$  $$ $$    $$ $$$$$ $$$$$$ $$$$$  $$$$$    $$$$$$ $$  $$  $$$$$ $$$$$$ $$  $$ $$$$$$
  *   $$$$  $$  $$ $$  $$  $$  $$  $$  $$  $$ $$$ $$     $$  $$ $$  $$  $$  $$ $$       $$  $$     $$        $$     $$$ $$ $$       $$   $$$ $$ $$
@@ -14,9 +14,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "argon_constants.h"
+#include "adder_constants.h"
 #include "vector_fns.h"
 #include "polygon.h"
 #include "body.h"
 
-#endif // ARGON_H
+#endif // ADDER_H

@@ -7,7 +7,7 @@
 
 #include "global.h"
 
-namespace ape {
+namespace adder {
 	glm::vec4 normal(const glm::vec4 &vec);
 }
 

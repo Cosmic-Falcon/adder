@@ -1,18 +1,18 @@
 #include "polygon.h"
 
-ape::Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
+adder::Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	_verts{vertices} {
 	set_position(pos);
 	_gl_verts = nullptr;
 	_gl_indices = nullptr;
 }
 
-ape::Polygon::~Polygon() {
+adder::Polygon::~Polygon() {
 	delete[] _gl_verts;
 	delete[] _gl_indices;
 }
 
-void ape::Polygon::rotate(float ang, const glm::vec4 &axis) {
+void adder::Polygon::rotate(float ang, const glm::vec4 &axis) {
 	if(ang == 0) return;
 
 	glm::vec4 negated_axis = -axis;
@@ -26,14 +26,14 @@ void ape::Polygon::rotate(float ang, const glm::vec4 &axis) {
 	_cache_status.gl_data = false;
 }
 
-void ape::Polygon::set_position(const glm::vec4 &pos) {
+void adder::Polygon::set_position(const glm::vec4 &pos) {
 	if(pos != _pos) {
 		translate(pos - _pos);
 		_cache_status.gl_data = false;
 	}
 }
 
-void ape::Polygon::translate(const glm::vec4 &xy) {
+void adder::Polygon::translate(const glm::vec4 &xy) {
 	_pos += xy;
 	_pos[3] = 1;
 	for(glm::vec4 &pt : _verts) {
@@ -43,15 +43,15 @@ void ape::Polygon::translate(const glm::vec4 &xy) {
 	_cache_status.gl_data = false;
 }
 
-glm::vec4 ape::Polygon::position() {
+glm::vec4 adder::Polygon::position() {
 	return _pos;
 }
 
-std::vector<glm::vec4> ape::Polygon::vertices() {
+std::vector<glm::vec4> adder::Polygon::vertices() {
 	return _verts;
 }
 
-bool ape::Polygon::is_convex() {
+bool adder::Polygon::is_convex() {
 	if(!_cache_status.is_convex) {
 		glm::vec3 a{_verts.front()[0] - _verts.back()[0], _verts.front()[1] - _verts.back()[1], 0.f};
 		glm::vec3 b{_verts[1][0] - _verts.front()[0], _verts[1][1] - _verts.front()[1], 0.f};
@@ -77,31 +77,31 @@ bool ape::Polygon::is_convex() {
 	return _is_convex;
 }
 
-GLfloat* ape::Polygon::get_gl_vertices() {
+GLfloat* adder::Polygon::get_gl_vertices() {
 	gen_gl_data();
 	return _gl_verts;
 }
 
-GLuint* ape::Polygon::get_gl_indices() {
+GLuint* adder::Polygon::get_gl_indices() {
 	gen_gl_data();
 	return _gl_indices;
 }
 
-int ape::Polygon::get_gl_vertices_size() {
+int adder::Polygon::get_gl_vertices_size() {
 	gen_gl_data();
 	return _verts_size;
 }
 
-int ape::Polygon::get_gl_indices_size() {
+int adder::Polygon::get_gl_indices_size() {
 	gen_gl_data();
 	return _indices_size;
 }
 
-int ape::Polygon::get_num_elements() {
+int adder::Polygon::get_num_elements() {
 	return _num_elmns;
 }
 
-glm::vec4 ape::Polygon::get_pos() {
+glm::vec4 adder::Polygon::get_pos() {
 	return _pos;
 }
 int constrain(int index, int bound) {
@@ -111,7 +111,7 @@ int constrain(int index, int bound) {
 	return index;
 }
 
-std::vector<int> ape::Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
+std::vector<int> adder::Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
 	DEBUG("SUBPOLYGON: " << top_start << ", " << top_end << ", " << bottom_start << ", " << bottom_end);
 	int num_vertices = _verts.size();
 	std::vector<int> subpolygon;
@@ -132,7 +132,7 @@ std::vector<int> ape::Polygon::get_subpolygon(int &top_start, int top_end, int b
 	return subpolygon;
 }
 
-std::vector<std::vector<int>> ape::Polygon::partition() {
+std::vector<std::vector<int>> adder::Polygon::partition() {
 	int num_vertices = _verts.size();
 
 	struct Node {
@@ -240,7 +240,7 @@ std::vector<std::vector<int>> ape::Polygon::partition() {
 	return partitions;
 }
 
-void ape::Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
+void adder::Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
 	int num_vertices = indices.size();
 
 #ifdef DEBUG_MODE
@@ -287,7 +287,7 @@ void ape::Polygon::triangulate(std::vector<int> &indices, int &start_index, int 
 		/* If the next vertex is on the bottom half of the polygon and the previous
 		 * vertices that don't form triangles are on the top half (or vice-versa),
 		 * then the current point and all of the previous points will form a series
-		 * of triangles shaped similarly to a chinese fan. If a fan of triangles is
+		 * of triangles shadderd similarly to a chinese fan. If a fan of triangles is
 		 * formed, add each of the triangles in the fan
 		 */
 		DEBUG(indices[a] << ", " << indices[b] << ", " << indices[left_index] << " | " << indices_index << ", " << _num_elmns);
@@ -372,7 +372,7 @@ void ape::Polygon::triangulate(std::vector<int> &indices, int &start_index, int 
 	start_index += num_vertices;
 }
 
-void ape::Polygon::gen_gl_data() {
+void adder::Polygon::gen_gl_data() {
 	if (!_cache_status.gl_data) {
 		_cache_status.gl_data = true;
 

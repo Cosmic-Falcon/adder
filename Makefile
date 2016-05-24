@@ -1,4 +1,4 @@
-BIN := argon
+BIN := adder
 CC := g++
 CFLAGS := -std=c++14 -O2 -c
 

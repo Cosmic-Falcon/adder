@@ -6,7 +6,7 @@
 
 #include "polygon.h"
 
-namespace ape {
+namespace adder {
 	class Body {
 	private:
 		float _mass;

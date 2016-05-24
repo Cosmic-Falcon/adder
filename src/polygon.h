@@ -32,7 +32,7 @@ namespace ape {
 
 		int get_num_elements();
 		glm::vec4 get_pos();
-	private:
+//	private:
 		std::vector<int> get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end);
 		std::vector<std::vector<int>> partition();
 		void triangulate(std::vector<int> &indices, int &start_index, int &indices_index);
@@ -46,8 +46,7 @@ namespace ape {
 			// True if the cache is up to date
 			bool gl_data = false;
 			bool is_convex = false;
-		};
-		CacheStatus _cache_status;
+		} _cache_status;
 
 		GLfloat* _gl_verts;
 		GLuint* _gl_indices;

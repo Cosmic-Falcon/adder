@@ -23,13 +23,13 @@ void ape::Polygon::rotate(float ang, const glm::vec4 &axis) {
 	for(int i = 0; i < _verts.size(); ++i)
 		_verts[i] = rotmat*_verts[i];
 	translate(axis);
-	_cache_status = CacheStatus();
+	_cache_status.gl_data = false;
 }
 
 void ape::Polygon::set_position(const glm::vec4 &pos) {
 	if(pos != _pos) {
 		translate(pos - _pos);
-		_cache_status = CacheStatus();
+		_cache_status.gl_data = false;
 	}
 }
 
@@ -40,7 +40,7 @@ void ape::Polygon::translate(const glm::vec4 &xy) {
 		pt += xy;
 		pt[3] = 1;
 	}
-	_cache_status = CacheStatus();
+	_cache_status.gl_data = false;
 }
 
 glm::vec4 ape::Polygon::position() {
@@ -53,8 +53,6 @@ std::vector<glm::vec4> ape::Polygon::vertices() {
 
 bool ape::Polygon::is_convex() {
 	if(!_cache_status.is_convex) {
-		_cache_status.is_convex = true;
-
 		glm::vec3 a{_verts.front()[0] - _verts.back()[0], _verts.front()[1] - _verts.back()[1], 0.f};
 		glm::vec3 b{_verts[1][0] - _verts.front()[0], _verts[1][1] - _verts.front()[1], 0.f};
 
@@ -73,6 +71,7 @@ bool ape::Polygon::is_convex() {
 				break;
 			}
 		}
+		_cache_status.is_convex = true;
 	}
 
 	return _is_convex;

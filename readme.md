@@ -1,7 +1,7 @@
-Argon Physics Engine
-======================
-Why? Because neutral Argon in its ground state has a complete 3p subshell,
-and this engine has **P**ixel **P**erfect **P**hysics (3P).
+ADDER
+=====
+####ADDER - Algorithms Describing Dynamic Entity Relations
+A simple physics engine
 
 Requirements
 ------------

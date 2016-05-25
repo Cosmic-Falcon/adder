@@ -10,52 +10,54 @@
 #include "adder_constants.h"
 
 namespace adder {
-	using Vertices = std::vector<glm::vec4>;
 
-	class Polygon {
-	public:
-		Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos = glm::vec4{0.f, 0.f, 0.f, 1.f});
-		~Polygon();
+using Vertices = std::vector<glm::vec4>;
 
-		void rotate(float ang, const glm::vec4 &axis);
-		void set_position(const glm::vec4 &pos);
-		void translate(const glm::vec4 &xy);
+class Polygon {
+public:
+	Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos = glm::vec4{0.f, 0.f, 0.f, 1.f});
+	~Polygon();
 
-		glm::vec4 position();
-		std::vector<glm::vec4> vertices();
+	void rotate(float ang, const glm::vec4 &axis);
+	void set_position(const glm::vec4 &pos);
+	void translate(const glm::vec4 &xy);
 
-		bool is_convex();
-		GLfloat* get_gl_vertices();
-		GLuint* get_gl_indices();
-		int get_gl_vertices_size();
-		int get_gl_indices_size();
+	glm::vec4 position();
+	std::vector<glm::vec4> vertices();
 
-		int get_num_elements();
-		glm::vec4 get_pos();
-	private:
-		std::vector<int> get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end);
-		std::vector<std::vector<int>> partition();
-		void triangulate(std::vector<int> &indices, int &start_index, int &indices_index);
-		void gen_gl_data();
+	bool is_convex();
+	GLfloat* get_gl_vertices();
+	GLuint* get_gl_indices();
+	int get_gl_vertices_size();
+	int get_gl_indices_size();
 
-		glm::vec4 _pos;
-		std::vector<glm::vec4> _verts;
+	int get_num_elements();
+	glm::vec4 get_pos();
+private:
+	std::vector<int> get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end);
+	std::vector<std::vector<int>> partition();
+	void triangulate(std::vector<int> &indices, int &start_index, int &indices_index);
+	void gen_gl_data();
 
-		// Cache data
-		struct CacheStatus {
-			// True if the cache is up to date
-			bool gl_data = false;
-			bool is_convex = false;
-		} _cache_status;
+	glm::vec4 _pos;
+	std::vector<glm::vec4> _verts;
 
-		GLfloat* _gl_verts;
-		GLuint* _gl_indices;
-		int _verts_size; // Size of _gl_verts in bytes
-		int _indices_size; // Size of _gl_indices in bytes
-		int _num_elmns; // Number of elements
-		bool _is_convex;
-	};
-}
+	// Cache data
+	struct CacheStatus {
+		// True if the cache is up to date
+		bool gl_data = false;
+		bool is_convex = false;
+	} _cache_status;
+
+	GLfloat* _gl_verts;
+	GLuint* _gl_indices;
+	int _verts_size; // Size of _gl_verts in bytes
+	int _indices_size; // Size of _gl_indices in bytes
+	int _num_elmns; // Number of elements
+	bool _is_convex;
+};
+
+} // adder
 
 std::string to_string(const std::vector<glm::vec4> &vertices);
 

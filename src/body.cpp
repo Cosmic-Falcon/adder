@@ -1,15 +1,16 @@
 #include "body.h"
 
-adder::Body::Body(float mass, float moment_of_inertia, float charge, Polygon poly):
+namespace adder {
+
+Body::Body(float mass, float moment_of_inertia, float charge, Polygon poly) :
 	_mass{mass},
 	_I{moment_of_inertia},
 	_q{charge},
-	_poly{poly}
-{
+	_poly{poly} {
 
 }
 
-void adder::Body::update(float dt) {
+void Body::update(float dt) {
 	glm::vec2 net_force = std::accumulate(_forces.begin(), _forces.end(), glm::vec2{0.f, 0.f});
 	float net_torque = std::accumulate(_torques.begin(), _torques.end(), 0.f);
 	_pos += _vel*dt;
@@ -33,10 +34,12 @@ void adder::Body::update(float dt) {
 	}
 }
 
-void adder::Body::add_force(const glm::vec2 &force) {
+void Body::add_force(const glm::vec2 &force) {
 	_forces.push_back(force);
 }
 
-void adder::Body::add_torque(const float &torque) {
+void Body::add_torque(const float &torque) {
 	_torques.push_back(torque);
 }
+
+} // adder

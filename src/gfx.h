@@ -16,19 +16,21 @@
 #include "global.h"
 
 namespace gfx {
-	// General
-	bool init(GLint version_major, GLint version_minor, GLboolean resizable);
 
-	// Shaders
-	GLuint compile_shader(const char* source, GLenum type);
-	GLuint create_program(std::initializer_list<GLuint> shaders);
+// General
+bool init(GLint version_major, GLint version_minor, GLboolean resizable);
 
-	// Textures
-	GLuint load_texture(const char* source);
-	void set_texture(GLenum target, GLenum unit, GLuint texture);
+// Shaders
+GLuint compile_shader(const char* source, GLenum type);
+GLuint create_program(std::initializer_list<GLuint> shaders);
 
-	// Windows
-	GLFWwindow* create_window(int width, int height, std::string name, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
-}
+// Textures
+GLuint load_texture(const char* source);
+void set_texture(GLenum target, GLenum unit, GLuint texture);
+
+// Windows
+GLFWwindow* create_window(int width, int height, std::string name, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
+
+} // gfx
 
 #endif // GFX_GFX_H

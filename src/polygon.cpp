@@ -1,18 +1,20 @@
 #include "polygon.h"
 
-adder::Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
+namespace adder {
+
+Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	_verts{vertices} {
 	set_position(pos);
 	_gl_verts = nullptr;
 	_gl_indices = nullptr;
 }
 
-adder::Polygon::~Polygon() {
+Polygon::~Polygon() {
 	delete[] _gl_verts;
 	delete[] _gl_indices;
 }
 
-void adder::Polygon::rotate(float ang, const glm::vec4 &axis) {
+void Polygon::rotate(float ang, const glm::vec4 &axis) {
 	if(ang == 0) return;
 
 	glm::vec4 negated_axis = -axis;
@@ -26,14 +28,14 @@ void adder::Polygon::rotate(float ang, const glm::vec4 &axis) {
 	_cache_status.gl_data = false;
 }
 
-void adder::Polygon::set_position(const glm::vec4 &pos) {
+void Polygon::set_position(const glm::vec4 &pos) {
 	if(pos != _pos) {
 		translate(pos - _pos);
 		_cache_status.gl_data = false;
 	}
 }
 
-void adder::Polygon::translate(const glm::vec4 &xy) {
+void Polygon::translate(const glm::vec4 &xy) {
 	_pos += xy;
 	_pos[3] = 1;
 	for(glm::vec4 &pt : _verts) {
@@ -43,15 +45,15 @@ void adder::Polygon::translate(const glm::vec4 &xy) {
 	_cache_status.gl_data = false;
 }
 
-glm::vec4 adder::Polygon::position() {
+glm::vec4 Polygon::position() {
 	return _pos;
 }
 
-std::vector<glm::vec4> adder::Polygon::vertices() {
+std::vector<glm::vec4> Polygon::vertices() {
 	return _verts;
 }
 
-bool adder::Polygon::is_convex() {
+bool Polygon::is_convex() {
 	if(!_cache_status.is_convex) {
 		glm::vec3 a{_verts.front()[0] - _verts.back()[0], _verts.front()[1] - _verts.back()[1], 0.f};
 		glm::vec3 b{_verts[1][0] - _verts.front()[0], _verts[1][1] - _verts.front()[1], 0.f};
@@ -77,31 +79,31 @@ bool adder::Polygon::is_convex() {
 	return _is_convex;
 }
 
-GLfloat* adder::Polygon::get_gl_vertices() {
+GLfloat* Polygon::get_gl_vertices() {
 	gen_gl_data();
 	return _gl_verts;
 }
 
-GLuint* adder::Polygon::get_gl_indices() {
+GLuint* Polygon::get_gl_indices() {
 	gen_gl_data();
 	return _gl_indices;
 }
 
-int adder::Polygon::get_gl_vertices_size() {
+int Polygon::get_gl_vertices_size() {
 	gen_gl_data();
 	return _verts_size;
 }
 
-int adder::Polygon::get_gl_indices_size() {
+int Polygon::get_gl_indices_size() {
 	gen_gl_data();
 	return _indices_size;
 }
 
-int adder::Polygon::get_num_elements() {
+int Polygon::get_num_elements() {
 	return _num_elmns;
 }
 
-glm::vec4 adder::Polygon::get_pos() {
+glm::vec4 Polygon::get_pos() {
 	return _pos;
 }
 int constrain(int index, int bound) {
@@ -111,7 +113,7 @@ int constrain(int index, int bound) {
 	return index;
 }
 
-std::vector<int> adder::Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
+std::vector<int> Polygon::get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end) {
 	DEBUG("SUBPOLYGON: " << top_start << ", " << top_end << ", " << bottom_start << ", " << bottom_end);
 	int num_vertices = _verts.size();
 	std::vector<int> subpolygon;
@@ -132,7 +134,7 @@ std::vector<int> adder::Polygon::get_subpolygon(int &top_start, int top_end, int
 	return subpolygon;
 }
 
-std::vector<std::vector<int>> adder::Polygon::partition() {
+std::vector<std::vector<int>> Polygon::partition() {
 	int num_vertices = _verts.size();
 
 	struct Node {
@@ -240,7 +242,7 @@ std::vector<std::vector<int>> adder::Polygon::partition() {
 	return partitions;
 }
 
-void adder::Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
+void Polygon::triangulate(std::vector<int> &indices, int &start_index, int &indices_index) {
 	int num_vertices = indices.size();
 
 #ifdef DEBUG_MODE
@@ -329,7 +331,7 @@ void adder::Polygon::triangulate(std::vector<int> &indices, int &start_index, in
 
 				std::cout << std::endl;
 #endif
-			} else { // If a fan is not formed, check if a triangular ear is formed
+				} else { // If a fan is not formed, check if a triangular ear is formed
 				if(std::find(remaining_vertices.begin(), remaining_vertices.end(), constrain(current - 2, num_vertices)) != remaining_vertices.end()) {
 					double old_slope = double(_verts[indices[constrain(current - 2, num_vertices)]][1] - _verts[indices[constrain(current - 1, num_vertices)]][1]) /
 						double(_verts[indices[constrain(current - 2, num_vertices)]][0] - _verts[indices[constrain(current - 1, num_vertices)]][0]);
@@ -354,8 +356,8 @@ void adder::Polygon::triangulate(std::vector<int> &indices, int &start_index, in
 					}
 				}
 			}
+			}
 		}
-	}
 
 #ifdef DEBUG_MODE
 	std::string indices_str = "";
@@ -370,10 +372,10 @@ void adder::Polygon::triangulate(std::vector<int> &indices, int &start_index, in
 #endif
 
 	start_index += num_vertices;
-}
+	}
 
-void adder::Polygon::gen_gl_data() {
-	if (!_cache_status.gl_data) {
+void Polygon::gen_gl_data() {
+	if(!_cache_status.gl_data) {
 		_cache_status.gl_data = true;
 
 		int num_vertices = _verts.size();
@@ -414,6 +416,8 @@ void adder::Polygon::gen_gl_data() {
 #endif
 	}
 }
+
+} // adder
 
 std::string to_string(const std::vector<glm::vec4> &vertices) {
 	std::string str = "";

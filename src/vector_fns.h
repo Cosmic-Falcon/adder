@@ -8,7 +8,9 @@
 #include "global.h"
 
 namespace adder {
-	glm::vec4 normal(const glm::vec4 &vec);
-}
+
+glm::vec4 normal(const glm::vec4 &vec);
+
+} // adder
 
 #endif // VECTOR_FUNCTIONS_H

@@ -29,7 +29,7 @@ void Body::update(float dt) {
 	}
 	if(_torques.size() > 100) {
 		_torques.clear();
-		_forces.reserve(100);
+		_torques.reserve(100);
 		_torques.push_back(net_torque);
 	}
 }

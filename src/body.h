@@ -21,7 +21,7 @@ private:
 	glm::vec2 _ang;                  // Orientation/Angle
 	glm::vec2 _ang_v;                // Angular Velocity
 
-	std::vector<std::vector<glm::vec4>> _seperation_axes; //Sets of Axes on which this body is tested for collision with other bodies
+	std::vector<std::vector<glm::vec3>> _seperation_axes; //Sets of Axes on which this body is tested for collision with other bodies
 public:
 	Body(float mass, float moment_of_inertia, float charge, Polygon poly);
 	void update(float dt);

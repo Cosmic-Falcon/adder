@@ -2,7 +2,7 @@
 
 namespace adder {
 
-Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
+Polygon::Polygon(std::vector<glm::vec3> vertices, glm::vec3 pos) :
 	_verts{vertices} {
 	set_position(pos);
 	_gl_verts = nullptr;
@@ -14,49 +14,46 @@ Polygon::~Polygon() {
 	delete[] _gl_indices;
 }
 
-void Polygon::rotate(float ang, const glm::vec4 &axis) {
+void Polygon::rotate(float ang, const glm::vec3 &axis) {
 	if(ang == 0) return;
 
-	glm::vec4 negated_axis = -axis;
-	negated_axis[3] = 1;
-	translate(negated_axis);
+	translate(-axis);
 
-	glm::mat4 rotmat = glm::rotate(glm::mat4(1.0), (float)ang * 180 / PI, glm::vec3(0, 0, 1)); // Always rotating around z-axis
 	for(int i = 0; i < _verts.size(); ++i)
-		_verts[i] = rotmat*_verts[i];
+		_verts[i] = glm::rotateZ(_verts[i], ang);
+
 	translate(axis);
+
 	_cache_status.gl_data = false;
 }
 
-void Polygon::set_position(const glm::vec4 &pos) {
+void Polygon::set_position(const glm::vec3 &pos) {
 	if(pos != _pos) {
 		translate(pos - _pos);
 		_cache_status.gl_data = false;
 	}
 }
 
-void Polygon::translate(const glm::vec4 &xy) {
+void Polygon::translate(const glm::vec3 &xy) {
 	_pos += xy;
-	_pos[3] = 1;
-	for(glm::vec4 &pt : _verts) {
+	for(glm::vec3 &pt : _verts) {
 		pt += xy;
-		pt[3] = 1;
 	}
 	_cache_status.gl_data = false;
 }
 
-glm::vec4 Polygon::position() {
+glm::vec3 Polygon::position() {
 	return _pos;
 }
 
-std::vector<glm::vec4> Polygon::vertices() {
+std::vector<glm::vec3> Polygon::vertices() {
 	return _verts;
 }
 
 bool Polygon::is_convex() {
 	if(!_cache_status.is_convex) {
-		glm::vec3 a{_verts.front()[0] - _verts.back()[0], _verts.front()[1] - _verts.back()[1], 0.f};
-		glm::vec3 b{_verts[1][0] - _verts.front()[0], _verts[1][1] - _verts.front()[1], 0.f};
+		glm::vec3 a =  _verts.front() -  _verts.back(); //{_verts.front()[0] - _verts.back()[0], _verts.front()[1] - _verts.back()[1], 0.f};
+		glm::vec3 b = _verts[1] - _verts.front(); // {_verts[1][0] - _verts.front()[0], _verts[1][1] - _verts.front()[1], 0.f};
 
 		float z = glm::cross(a, b)[2];
 		int sign = ((z > 0) ? 1 : -1);
@@ -64,8 +61,8 @@ bool Polygon::is_convex() {
 		_is_convex = true;
 
 		for(int i = 0; i < _verts.size() - 2; ++i) {
-			glm::vec3 a{_verts[i + 1][0] - _verts[i][0], _verts[i + 1][1] - _verts[i][1], 0.f};
-			glm::vec3 b{_verts[i + 2][0] - _verts[i + 1][0], _verts[i + 2][1] - _verts[i + 1][1], 0.f};
+			glm::vec3 a = _verts[i+1] - _verts[i]; // {_verts[i + 1][0] - _verts[i][0], _verts[i + 1][1] - _verts[i][1], 0.f};
+			glm::vec3 b = _verts[i+2] - _verts[i+1]; // {_verts[i + 2][0] - _verts[i + 1][0], _verts[i + 2][1] - _verts[i + 1][1], 0.f};
 			float z = glm::cross(a, b)[2];
 			int this_sign = ((z > 0) ? 1 : -1);
 			if(sign != this_sign) {
@@ -103,7 +100,7 @@ int Polygon::get_num_elements() {
 	return _num_elmns;
 }
 
-glm::vec4 Polygon::get_pos() {
+glm::vec3 Polygon::get_position() {
 	return _pos;
 }
 int constrain(int index, int bound) {
@@ -419,9 +416,9 @@ void Polygon::gen_gl_data() {
 
 } // adder
 
-std::string to_string(const std::vector<glm::vec4> &vertices) {
+std::string to_string(const std::vector<glm::vec3> &vertices) {
 	std::string str = "";
-	for(const glm::vec4 &vertex : vertices)
+	for(const glm::vec3 &vertex : vertices)
 		str += "(" + std::to_string(vertex[0]) + ", " + std::to_string(vertex[1]) + ") ";
 	return str;
 }

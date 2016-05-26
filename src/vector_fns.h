@@ -3,13 +3,14 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "global.h"
 
 namespace adder {
 
-glm::vec4 normal(const glm::vec4 &vec);
+glm::vec3 normal(const glm::vec3 &vec);
 
 } // adder
 

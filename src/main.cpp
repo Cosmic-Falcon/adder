@@ -19,8 +19,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	adder::Polygon poly({{0, 0, 0, 1}, {8, 32, 0, 1}, {0, 64, 0, 1}, {32, 56, 0, 1}, {64, 64, 0, 1}, {56, 32, 0, 1}, {64, 0, 0, 1}, {32, 8, 0, 1}}, {256, 128, 0, 1});
-	poly.rotate(2*PI/3, poly.get_pos());
+	adder::Polygon poly({{0, 0, 0}, {8, 32, 0}, {0, 64, 0}, {32, 56, 0}, {64, 64, 0}, {56, 32, 0}, {64, 0, 0}, {32, 8, 0}}, {256, 128, 0});
+	poly.translate({0, 50, 0});
+	std::cout << to_string(poly.vertices()) << std::endl;
+	poly.rotate(3*PI/4, poly.get_position());
+
+
+	std::cout << to_string(poly.vertices()) << std::endl;
 	adder::Body body(100, 100, -.1, poly);
 	gfx::init(3, 3, GL_FALSE);
 	GLFWwindow* window = gfx::create_window(640, 480, "Adder Physics Engine");

@@ -20,7 +20,7 @@ void Body::update(float dt) {
 	if(_I > 0)
 		_ang_v += (net_torque / _I)*dt;
 
-	_poly.set_position({_pos[0], _pos[1], 0.f, 1.f});
+	_poly.set_position({_pos[0], _pos[1], 0.f});
 
 	if(_forces.size() > 100) {
 		_forces.clear();

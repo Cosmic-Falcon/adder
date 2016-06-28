@@ -1,12 +1,11 @@
 #include <iostream>
 
+#include <boa/boa.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "global.h"
 #include "adder.h"
-#include "gfx.h"
 
 bool keys[1024];
 
@@ -22,16 +21,16 @@ int main() {
 	adder::Polygon poly({{0, 0, 0, 1}, {8, 32, 0, 1}, {0, 64, 0, 1}, {32, 56, 0, 1}, {64, 64, 0, 1}, {56, 32, 0, 1}, {64, 0, 0, 1}, {32, 8, 0, 1}}, {256, 128, 0, 1});
 	poly.rotate(2*PI/3, poly.get_pos());
 	adder::Body body(100, 100, -.1, poly);
-	gfx::init(3, 3, GL_FALSE);
-	GLFWwindow* window = gfx::create_window(640, 480, "Adder Physics Engine");
+	boa::init(3, 3, GL_FALSE);
+	GLFWwindow* window = boa::create_window(640, 480, "Adder Physics Engine");
 	glfwSetKeyCallback(window, key_callback);
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
-	GLuint vertex_shader = gfx::compile_shader("res/shaders/shader.vert", GL_VERTEX_SHADER);
-	GLuint fragment_shader = gfx::compile_shader("res/shaders/shader.frag", GL_FRAGMENT_SHADER);
-	GLuint shader_program = gfx::create_program({vertex_shader, fragment_shader});
+	GLuint vertex_shader = boa::compile_shader("res/shaders/shader.vert", GL_VERTEX_SHADER);
+	GLuint fragment_shader = boa::compile_shader("res/shaders/shader.frag", GL_FRAGMENT_SHADER);
+	GLuint shader_program = boa::create_program({vertex_shader, fragment_shader});
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
 	

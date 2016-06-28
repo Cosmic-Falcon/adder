@@ -6,8 +6,12 @@
 #include <queue>
 #include <vector>
 
-#include "gfx.h"
-#include "adder_constants.h"
+#include <boa/boa.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "adder_global.h"
 
 namespace adder {
 
@@ -26,17 +30,14 @@ public:
 	std::vector<glm::vec4> vertices();
 
 	bool is_convex();
-	GLfloat* get_gl_vertices();
-	GLuint* get_gl_indices();
+	float* get_gl_vertices();
+	unsigned int* get_gl_indices();
 	int get_gl_vertices_size();
 	int get_gl_indices_size();
 
 	int get_num_elements();
 	glm::vec4 get_pos();
 private:
-	std::vector<int> get_subpolygon(int &top_start, int top_end, int bottom_start, int &bottom_end);
-	std::vector<std::vector<int>> partition();
-	void triangulate(std::vector<int> &indices, int &start_index, int &indices_index);
 	void gen_gl_data();
 
 	glm::vec4 _pos;
@@ -49,11 +50,7 @@ private:
 		bool is_convex = false;
 	} _cache_status;
 
-	GLfloat* _gl_verts;
-	GLuint* _gl_indices;
-	int _verts_size; // Size of _gl_verts in bytes
-	int _indices_size; // Size of _gl_indices in bytes
-	int _num_elmns; // Number of elements
+	boa::GLData _gl_data;
 	bool _is_convex;
 };
 

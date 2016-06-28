@@ -14,7 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "adder_constants.h"
+#include "adder_global.h"
 #include "vector_fns.h"
 #include "polygon.h"
 #include "body.h"

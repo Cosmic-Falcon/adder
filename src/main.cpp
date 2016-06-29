@@ -19,7 +19,7 @@ void key_parse(); // Act on key presses
 
 int main() {
 	adder::Polygon poly({{0, 0, 0, 1}, {8, 32, 0, 1}, {0, 64, 0, 1}, {32, 56, 0, 1}, {64, 64, 0, 1}, {56, 32, 0, 1}, {64, 0, 0, 1}, {32, 8, 0, 1}}, {256, 128, 0, 1});
-	poly.rotate(2*PI/3, poly.get_pos());
+	poly.rotate(2*adder::PI/3, poly.get_pos());
 	adder::Body body(100, 100, -.1, poly);
 	boa::init(3, 3, GL_FALSE);
 	GLFWwindow* window = boa::create_window(640, 480, "Adder Physics Engine");

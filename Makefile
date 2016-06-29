@@ -52,9 +52,7 @@ test: $(TEST_OBJS)
 	$(CC) $(TEST_OBJS) $(INCL_DIRS) $(TEST_INCL_DIRS) $(LIB_DIRS) $(TEST_LIB_DIRS) $(TEST_LIBS) -o $(TEST_DIR)/$(TEST_BIN)
 
 run:
-	cd $(TEST_DIR)
-	./$(TEST_DIR)/$(TEST_BIN)
-	cd -
+	cd $(TEST_DIR); ./$(TEST_BIN)
 
 # General targets
 debug: CFLAGS += -g -D DEBUG_MODE

@@ -1,11 +1,10 @@
 #include <iostream>
 
+#include <adder/adder.h>
 #include <boa/boa.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include "adder.h"
 
 bool keys[1024];
 

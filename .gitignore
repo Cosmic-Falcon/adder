@@ -1,5 +1,7 @@
 include
 lib
 obj/*.o
+out/*
+test/obj/*.o
 
-adder
+test/adder_test

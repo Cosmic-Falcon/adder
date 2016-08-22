@@ -48,7 +48,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(TEST_DIR)/$(OBJ_DIR)/%.o: $(TEST_DIR)/$(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) $< $(INCL_DIRS) $(TEST_INCL_DIRS) -o $@
 
-test: $(TEST_OBJS)
+test: all $(TEST_OBJS)
 	$(CC) $(TEST_OBJS) $(INCL_DIRS) $(TEST_INCL_DIRS) $(LIB_DIRS) $(TEST_LIB_DIRS) $(TEST_LIBS) -o $(TEST_DIR)/$(TEST_BIN)
 
 run:

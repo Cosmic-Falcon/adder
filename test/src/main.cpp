@@ -20,7 +20,9 @@ int main() {
 	adder::Polygon poly({{0, 0, 0, 1}, {8, 32, 0, 1}, {0, 64, 0, 1}, {32, 56, 0, 1}, {64, 64, 0, 1}, {56, 32, 0, 1}, {64, 0, 0, 1}, {32, 8, 0, 1}}, {256, 128, 0, 1});
 	poly.rotate(2*adder::PI/3, poly.get_pos());
 	adder::Body body(100, 100, -.1, poly);
+
 	boa::init(3, 3, GL_FALSE);
+	boa::GLData poly_gl_data = boa::gen_gl_data(poly.vertices());
 	GLFWwindow* window = boa::create_window(640, 480, "Adder Physics Engine");
 	glfwSetKeyCallback(window, key_callback);
 
@@ -48,13 +50,13 @@ int main() {
 	glBindVertexArray(vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, poly.get_gl_vertices_size(), poly.get_gl_vertices(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, poly_gl_data.verts_size, poly_gl_data.vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, poly.get_gl_indices_size(), poly.get_gl_indices(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, poly_gl_data.indices_size, poly_gl_data.indices, GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -87,7 +89,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glDrawElements(GL_TRIANGLES, poly.get_num_elements(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, poly_gl_data.num_elements, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

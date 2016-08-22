@@ -40,7 +40,6 @@ private:
 	// Cache data
 	struct CacheStatus {
 		// True if the cache is up to date
-		bool gl_data = false;
 		bool is_convex = false;
 	} _cache_status;
 

@@ -30,12 +30,6 @@ public:
 	std::vector<glm::vec4> vertices();
 
 	bool is_convex();
-	float* get_gl_vertices();
-	unsigned int* get_gl_indices();
-	int get_gl_vertices_size();
-	int get_gl_indices_size();
-
-	int get_num_elements();
 	glm::vec4 get_pos();
 private:
 	void gen_gl_data();
@@ -50,7 +44,6 @@ private:
 		bool is_convex = false;
 	} _cache_status;
 
-	boa::GLData _gl_data;
 	bool _is_convex;
 };
 

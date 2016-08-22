@@ -72,45 +72,8 @@ bool Polygon::is_convex() {
 	return _is_convex;
 }
 
-float* Polygon::get_gl_vertices() {
-	gen_gl_data();
-	return _gl_data.vertices;
-}
-
-unsigned int* Polygon::get_gl_indices() {
-	gen_gl_data();
-	return _gl_data.indices;
-}
-
-int Polygon::get_gl_vertices_size() {
-	gen_gl_data();
-	return _gl_data.verts_size;
-}
-
-int Polygon::get_gl_indices_size() {
-	gen_gl_data();
-	return _gl_data.indices_size;
-}
-
-int Polygon::get_num_elements() {
-	return (_gl_data.num_verts - 2) * 3;
-}
-
 glm::vec4 Polygon::get_pos() {
 	return _pos;
-}
-int constrain(int index, int bound) {
-	while(index >= bound) index -= bound;
-	while(index < 0) index += bound;
-
-	return index;
-}
-
-void Polygon::gen_gl_data() {
-	if(!_cache_status.gl_data) {
-		_cache_status.gl_data = true;
-		_gl_data = boa::gen_gl_data(_verts);
-	}
 }
 
 } // adder

@@ -19,6 +19,7 @@ using Vertices = std::vector<glm::vec4>;
 
 class Polygon {
 public:
+	Polygon(std::vector<glm::vec2> vertices, glm::vec2 pos = glm::vec2{0.f, 0.f});
 	Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos = glm::vec4{0.f, 0.f, 0.f, 1.f});
 	~Polygon();
 

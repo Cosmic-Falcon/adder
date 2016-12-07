@@ -2,6 +2,11 @@
 
 namespace adder {
 
+Polygon::Polygon(std::vector<glm::vec2> vertices, glm::vec2 pos) :
+	_verts{vertices, 0.0f, 1.0f} {
+	set_position(pos, 0.0f, 1.0f);
+}
+
 Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
 	_verts{vertices} {
 	set_position(pos);

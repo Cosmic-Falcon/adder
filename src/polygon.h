@@ -1,12 +1,8 @@
 #ifndef GEO_POLYGON_H
 #define GEO_POLYGON_H
 
-#include <algorithm>
-#include <array>
-#include <queue>
 #include <vector>
 
-#include <boa/boa.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -31,9 +27,7 @@ public:
 	std::vector<glm::vec4> vertices();
 
 	bool is_convex();
-	glm::vec4 get_pos();
 private:
-	void gen_gl_data();
 
 	glm::vec4 _pos;
 	std::vector<glm::vec4> _verts;

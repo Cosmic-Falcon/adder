@@ -1,15 +1,23 @@
 #include "polygon.h"
 
+#include <string>
+#include <algorithm>
+#include <array>
+#include <queue>
+#include <iostream>
+
 namespace adder {
 
 Polygon::Polygon(std::vector<glm::vec2> vertices, glm::vec2 pos) :
-	_verts(vertices.size(), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) {
+	_verts(vertices.size(), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+	_pos{0, 0, 0, 1} {
 	for (int i = 0; i < _verts.size(); ++i) {
 		_verts[i][0] = vertices[i][0];
 		_verts[i][1] = vertices[i][1];
+		_verts[i][2] = 0;
+		_verts[i][3] = 1;
 	}
-
-	set_position(glm::vec4(pos, 0.0f, 1.0f));
+	set_position({pos[0], pos[1], 0, 1});
 }
 
 Polygon::Polygon(std::vector<glm::vec4> vertices, glm::vec4 pos) :
@@ -80,10 +88,6 @@ bool Polygon::is_convex() {
 	}
 
 	return _is_convex;
-}
-
-glm::vec4 Polygon::get_pos() {
-	return _pos;
 }
 
 } // adder

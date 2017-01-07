@@ -1,6 +1,7 @@
 #include "body.h"
 
 #include <numeric>
+#include <algorithm>
 #include <iostream>
 namespace adder {
 
@@ -10,11 +11,11 @@ std::vector<glm::vec2> Body::_gen_sep_axes() {
 	for(int i = 0; i < verts.size() - 1; ++i) {
 		glm::vec2 line_vec = {verts[i + 1][0] - verts[i][0], verts[i + 1][1] - verts[i][1]};
 		glm::vec2 perp_vec = {line_vec[1], -line_vec[0]};
-		sep_axes.push_back(perp_vec);
+		sep_axes.push_back(glm::normalize(perp_vec));
 	}
 	glm::vec2 line_vec = {verts.front()[0] - verts.back()[0], verts.front()[1] - verts.back()[1]};
 	glm::vec2 perp_vec = {line_vec[1], -line_vec[0]};
-	sep_axes.push_back(perp_vec);
+	sep_axes.push_back(glm::normalize(perp_vec));
 	return sep_axes;
 }
 

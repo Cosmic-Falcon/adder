@@ -4,20 +4,8 @@
 #include "../../src/adder.h"
 #include <chrono>
 
-std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices) {
-	std::vector<sf::VertexArray> lines;
-	for(int i = 0; i < vertices.size() - 1; ++i) {
-		sf::VertexArray line{sf::Lines, 2};
-		line[0].position = sf::Vector2f{vertices[i][0], vertices[i][1]};
-		line[1].position = sf::Vector2f{vertices[i+1][0], vertices[i+1][1]};
-		lines.push_back(line);
-	}
-	sf::VertexArray line{sf::Lines, 2};
-	line[0].position = sf::Vector2f{vertices.back()[0], vertices.back()[1]};
-	line[1].position = sf::Vector2f{vertices.front()[0], vertices.front()[1]};
-	lines.push_back(line);
-	return lines;
-}
+std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec2> vertices);
+std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices);
 
 int main() {
 	adder::Body body(1, 1, 1, {{0, 0}, {0, 64}, {64, 64}, {64, 0}}, {320, 320});
@@ -57,8 +45,40 @@ int main() {
 		window.clear(sf::Color::Black);
 		for(auto line : verts_to_lines(body.get_poly().vertices()))
 			window.draw(line);
+		for(auto line : verts_to_lines(body.seperation_axes()))
+			window.draw(line);
 		window.display();
 
 	}
 	return 0;
+}
+
+
+std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec2> vertices) {
+	std::vector<sf::VertexArray> lines;
+	for(int i = 0; i < vertices.size() - 1; ++i) {
+		sf::VertexArray line{sf::Lines, 2};
+		line[0].position = sf::Vector2f{vertices[i][0], vertices[i][1]};
+		line[1].position = sf::Vector2f{vertices[i + 1][0], vertices[i + 1][1]};
+		lines.push_back(line);
+	}
+	sf::VertexArray line{sf::Lines, 2};
+	line[0].position = sf::Vector2f{vertices.back()[0], vertices.back()[1]};
+	line[1].position = sf::Vector2f{vertices.front()[0], vertices.front()[1]};
+	lines.push_back(line);
+	return lines;
+}
+std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices) {
+	std::vector<sf::VertexArray> lines;
+	for(int i = 0; i < vertices.size() - 1; ++i) {
+		sf::VertexArray line{sf::Lines, 2};
+		line[0].position = sf::Vector2f{vertices[i][0], vertices[i][1]};
+		line[1].position = sf::Vector2f{vertices[i + 1][0], vertices[i + 1][1]};
+		lines.push_back(line);
+	}
+	sf::VertexArray line{sf::Lines, 2};
+	line[0].position = sf::Vector2f{vertices.back()[0], vertices.back()[1]};
+	line[1].position = sf::Vector2f{vertices.front()[0], vertices.front()[1]};
+	lines.push_back(line);
+	return lines;
 }

@@ -20,5 +20,6 @@
 #include "vector_fns.h"
 #include "polygon.h"
 #include "body.h"
+#include "Entity.h"
 
 #endif // ADDER_H

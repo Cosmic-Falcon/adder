@@ -42,6 +42,10 @@ public:
 
 	Polygon get_poly() const { return _poly; };
 	std::vector<glm::vec2> seperation_axes() const { return _seperation_axes; }
+
+	// Project body onto an axis
+	// Return: (min, max)
+	std::pair<float, float> project_onto(const glm::vec2 axis);
 };
 
 } // adder

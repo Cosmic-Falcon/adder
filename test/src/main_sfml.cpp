@@ -8,7 +8,7 @@ std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec2> vertices);
 std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices);
 
 int main() {
-	adder::Body body(1, 1, 1, {{0, 0}, {0, 64}, {64, 64}, {64, 0}}, {320, 320});
+	adder::Body body(1, 1, 1, {{0, 0}, {0, 64}, {64, 64}, {64, 0}}, {0, 0});
 	constexpr int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 640;
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "ADDER");
 	window.setFramerateLimit(60);
@@ -36,6 +36,9 @@ int main() {
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			body.set_velocity(body.velocity() + glm::vec2{0, v});
 		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)) {
+			body.set_velocity({0, 0});
+		}
 
 		t_1 = std::chrono::steady_clock::now();
 		float dt = std::chrono::duration_cast<std::chrono::milliseconds>(t_1 - t_0).count();
@@ -43,10 +46,10 @@ int main() {
 		t_0 = std::chrono::steady_clock::now();
 
 		window.clear(sf::Color::Black);
+		
 		for(auto line : verts_to_lines(body.get_poly().vertices()))
 			window.draw(line);
-		for(auto line : verts_to_lines(body.seperation_axes()))
-			window.draw(line);
+
 		window.display();
 
 	}

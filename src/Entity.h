@@ -20,7 +20,9 @@ public:
 
 	// Where User should implement own stuff
 	// DO NOT call _body.update, ever
-	virtual void update(float dt) = 0;
+	virtual void update(float dt) {};
+
+	Body body() const { return _body; }
 protected:
 	Body _body;
 };

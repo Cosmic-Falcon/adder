@@ -1,10 +1,10 @@
 TODO
 ====
 
-### Create Brain Class
-* Manages interactions between entities
-* Users should be able to add entities to the object
-  * Hash table and some sorta hashing system
+### Create Brain (Manager) Class
+* Calculate shortest vector to project a body out of another body
+  * Should be shortest overlap of min/max ranges, multiplied by the seperating axis
+  * (or maybe times the normal of the separating axis)
 
 
 ### Entity

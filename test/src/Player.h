@@ -36,8 +36,8 @@ std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices) {
 
 class Player : public adder::Entity, public sf::Drawable {
 public:
-	Player():
-		Entity(adder::Body(1, 1, 1, {{0, 0},{0, 64},{64, 64},{64, 0}}, {0, 0})) {
+	Player(glm::vec2 pos = {0, 0}) :
+		Entity(adder::Body(1, 1, 1, {{0, 0},{0, 50},{50, 50},{50, 0}}, pos)) {
 	}
 	void update(float dt) final {
 		float v = .01f;
@@ -57,7 +57,6 @@ public:
 			_body.set_velocity({0, 0});
 		}
 	}
-	adder::Body body() const { return _body; }
 private:
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const final {
 		for(auto line : verts_to_lines(_body.get_poly().vertices()))

@@ -37,12 +37,12 @@ std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices) {
 class Player : public adder::Entity, public sf::Drawable {
 public:
 	Player(glm::vec2 pos = {0, 0}, bool controllable = false) :
-		Entity(adder::Body(1, 1, 1, {{0, 0},{0, 50},{25, 75},{ 50, 50 },{75, 15}, { 50, 0 }}, pos)),
+		Entity(adder::Body(1, 1, 1, {{0, 0}, { 0, 50 },{25, 75}, { 50, 50 }, {75, 10}, { 50, 0 }}, pos)),
 		_ctrlable(controllable) {
 	}
 	void update(float dt) final {
 		if(_ctrlable) {
-			float v = .01f;
+			float v = .001f;
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 				_body.set_velocity(_body.velocity() + glm::vec2{-v, 0});
 			}

@@ -8,13 +8,14 @@
 int main() {
 	constexpr int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 640;
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "ADDER");
-	window.setFramerateLimit(10);
+	window.setFramerateLimit(60);
 	std::chrono::steady_clock::time_point t_0, t_1;
 	t_0 = std::chrono::steady_clock::now();
 	t_1 = std::chrono::steady_clock::now();
 	adder::Manager manager;
 	manager.add_entity("p1", new Player({320, 320}));
-	manager.add_entity("p2", new Player({290, 380}, true));
+	manager.add_entity("p2", new Player({290, 400}, true));
+	manager.add_entity("p3", new Player({100, 100}));
 
 	while(window.isOpen()) {
 		sf::Event event;
@@ -33,6 +34,7 @@ int main() {
 		window.clear(sf::Color::Black);
 		window.draw(*(Player*)(manager.get("p1")));
 		window.draw(*(Player*)(manager.get("p2")));
+		window.draw(*(Player*)(manager.get("p3")));
 		std::vector<glm::vec2> v = {{0, 0}, manager.projection_axis};
 		std::transform(v.begin(), v.end(), v.begin(), [] (glm::vec2 vec) {
 			return 10.f*vec + glm::vec2{100, 100};

@@ -1,7 +1,7 @@
 #include "Manager.h"
 #include <iostream>
 #include <algorithm>
-
+#include "vector_fns.h"
 namespace adder {
 void Manager::update(float dt) {
 	for(auto &pair : _entities) {
@@ -12,9 +12,22 @@ void Manager::update(float dt) {
 			bool have_collided;
 			glm::vec2 axis;
 			std::tie(have_collided, axis) = collided(i->second, j->second);
-			if(have_collided) {
-				std::cout << "collision" << std::endl;
+			if(have_collided && axis != glm::vec2{0, 0}) {
+				std::cout << "collision " << glm::length(axis) <<  std::endl;
 				projection_axis = axis;
+				Body &i_body = i->second->body();
+				Body &j_body = j->second->body();
+				float mi = i_body.mass(), mj = j_body.mass();
+				glm::vec2 vi_vec = project(i_body.velocity(), axis);
+				glm::vec2 vj_vec = project(j_body.velocity(), axis);
+				float vi = scalar_project(i_body.velocity(), axis);
+				float vj = scalar_project(j_body.velocity(), axis);
+
+				float vi_p = ((mi - mj)*vi + 2 * mj*vj) / (mi + mj);
+				float vj_p = (2 * mi*vi + (mj - mi)*vj) / (mi + mj);
+
+				i_body.set_velocity(i_body.velocity()-vi_vec+vi_p*axis);
+				j_body.set_velocity(j_body.velocity()-vj_vec + vj_p*axis);
 			}
 		}
 	}
@@ -43,13 +56,13 @@ bool Manager::add_entity(Entity *entity) {
 	return true;
 }
 std::pair<bool, glm::vec2> Manager::collided(Entity *a, Entity *b) {
-	auto sep_axes = a->body().seperation_axes();
+	auto sep_axes = a->cbody().seperation_axes();
 	auto sep_axis_it = sep_axes.begin();
-	float min_overlap = overlap(a->body().project_onto(*sep_axis_it), b->body().project_onto(*sep_axis_it));
+	float min_overlap = overlap(a->cbody().project_onto(*sep_axis_it), b->cbody().project_onto(*sep_axis_it));
 	auto min_dist_sep_ax = *sep_axis_it;
 	++sep_axis_it;
 	for(; sep_axis_it != sep_axes.end(); ++sep_axis_it) {
-		float len_overlap = overlap(a->body().project_onto(*sep_axis_it), b->body().project_onto(*sep_axis_it));
+		float len_overlap = overlap(a->cbody().project_onto(*sep_axis_it), b->cbody().project_onto(*sep_axis_it));
 		if(len_overlap == 0)
 			return{false, {0, 0}};
 		if(len_overlap < min_overlap) {
@@ -62,8 +75,10 @@ std::pair<bool, glm::vec2> Manager::collided(Entity *a, Entity *b) {
 float Manager::overlap(std::pair<float, float> a, std::pair<float, float> b) {
 	float a_min = a.first, a_max = a.second;
 	float b_min = b.first, b_max = b.second;
-	if(b_min > a_max || a_min > b_max)
+	if(b_min > a_max || a_min > b_max) {
+	//	std::cout << "not overlap" << std::endl;
 		return 0;
+	}
 	auto is_subset = [] (std::pair<float, float> a, std::pair<float, float> b) {
 		return (a.first >= b.first && a.second <= b.second);
 	};

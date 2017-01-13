@@ -22,7 +22,8 @@ public:
 	// DO NOT call _body.update, ever
 	virtual void update(float dt) {};
 
-	Body body() const { return _body; }
+	Body &body() { return _body; }
+	Body cbody() const { return _body; }
 protected:
 	Body _body;
 };

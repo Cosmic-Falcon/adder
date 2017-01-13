@@ -81,13 +81,18 @@ void Body::set_angular_velocity(const float &ang_v) {
 	_ang_v = ang_v;
 }
 
-std::pair<float, float> Body::project_onto(const glm::vec2 axis)  {
+void Body::translate(const glm::vec2 &dpos) {
+	_pos += dpos;
+	_poly.translate({dpos[0], dpos[1], 0, 0});
+}
+
+std::pair<float, float> Body::project_onto(glm::vec2 axis)  {
 	glm::vec4 vec4_ax = glm::normalize(glm::vec4{axis[0], axis[1], 0, 0});
 	auto mag_sqrd = std::pow(glm::length(vec4_ax), 2);
-	float min = glm::dot(_poly.vertices()[0], vec4_ax)/mag_sqrd;
+	float min = glm::dot(_poly.vertices()[0], vec4_ax) / mag_sqrd;
 	float max = min;
 	for(int i = 1; i < _poly.vertices().size(); ++i) {
-		float res = glm::dot(_poly.vertices()[i], vec4_ax)/mag_sqrd;
+		float res = glm::dot(_poly.vertices()[i], vec4_ax) / mag_sqrd;
 		if(res > max)
 			max = res;
 		if(res < min)

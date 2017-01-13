@@ -2,8 +2,10 @@ TODO
 ====
 
 ### Create Brain (Manager) Class
-* Do physics
-
-
+*  Fix overlap/collision detection.
+   
 ### Entity
 * Consider making *update* and *cycle* private, and then friend with *Brain*
+
+### Vector Fns
+* Create project_onto function

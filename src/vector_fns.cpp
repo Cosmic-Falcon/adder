@@ -6,4 +6,12 @@ glm::vec4 normal(const glm::vec4 &vec) {
 	return rot_mat*vec;
 }
 
+float scalar_project(const glm::vec2 &vec, const glm::vec2 &axis) {
+	return (glm::dot(vec, axis) / std::pow(glm::length(axis), 2));
+}
+
+glm::vec2 project(const glm::vec2 &vec, const glm::vec2 &axis) {
+	return axis*scalar_project(vec, axis);
+}
+
 } // adder

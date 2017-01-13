@@ -31,6 +31,7 @@ public:
 	void add_torque(const float &torque);
 	void set_velocity(const glm::vec2 &vel);
 	void set_angular_velocity(const float &ang_v);
+	void translate(const glm::vec2 &dpos);
 
 	float mass() const { return _mass; };
 	float moment_of_inertia() const { return _I; };

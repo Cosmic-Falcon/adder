@@ -20,13 +20,18 @@ public:
 	bool add_entity(std::pair<std::string, Entity*> pair);
 	bool add_entity(std::string key, Entity *entity);
 	bool add_entity(Entity *entity);
+
+	glm::vec2 projection_axis = {0, 0};
 private:
 	std::map<std::string, Entity*> _entities;
 	unsigned int _latest_id = 0;
-	bool collided(Entity *a, Entity *b);
+
+	// Return: (if entities a and b have collided, shortest vector to move them out of collision)
+	std::pair<bool, glm::vec2> collided(Entity *a, Entity *b);
 	
-	// Each pair is a range, [min, max]
-	bool overlap(std::pair<float, float> a, std::pair<float, float> b);
+	// Each input pair is a range, [min, max]
+	// Result: (whether overlaps or not, distance overlapped)
+	float overlap(std::pair<float, float> a, std::pair<float, float> b);
 };
 
 } // end adder

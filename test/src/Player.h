@@ -36,25 +36,28 @@ std::vector<sf::VertexArray> verts_to_lines(std::vector<glm::vec4> vertices) {
 
 class Player : public adder::Entity, public sf::Drawable {
 public:
-	Player(glm::vec2 pos = {0, 0}) :
-		Entity(adder::Body(1, 1, 1, {{0, 0},{0, 50},{50, 50},{50, 0}}, pos)) {
+	Player(glm::vec2 pos = {0, 0}, bool controllable = false) :
+		Entity(adder::Body(1, 1, 1, {{0, 0},{0, 50},{25, 75},{ 50, 50 },{75, 15}, { 50, 0 }}, pos)),
+		_ctrlable(controllable) {
 	}
 	void update(float dt) final {
-		float v = .01f;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			_body.set_velocity(_body.velocity() + glm::vec2{-v, 0});
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			_body.set_velocity(_body.velocity() + glm::vec2{v, 0});
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			_body.set_velocity(_body.velocity() + glm::vec2{0, -v});
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			_body.set_velocity(_body.velocity() + glm::vec2{0, v});
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)) {
-			_body.set_velocity({0, 0});
+		if(_ctrlable) {
+			float v = .01f;
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+				_body.set_velocity(_body.velocity() + glm::vec2{-v, 0});
+			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+				_body.set_velocity(_body.velocity() + glm::vec2{v, 0});
+			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				_body.set_velocity(_body.velocity() + glm::vec2{0, -v});
+			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+				_body.set_velocity(_body.velocity() + glm::vec2{0, v});
+			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)) {
+				_body.set_velocity({0, 0});
+			}
 		}
 	}
 private:
@@ -62,6 +65,7 @@ private:
 		for(auto line : verts_to_lines(_body.get_poly().vertices()))
 			target.draw(line);
 	}
+	bool _ctrlable;
 };
 
 #endif

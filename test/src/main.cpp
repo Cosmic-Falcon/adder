@@ -17,7 +17,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void key_parse(); // Act on key presses
 
 int main() {
-	adder::Polygon poly({{0, 0}, {0, 64}, {64, 64}, {64, 0}}, {256, 128});
+	adder::Polygon poly({{0, 0}, {0, 64}, {64, 128}, {64, 0}}, {256, 128});
 	adder::Body body(100, 100, -.1, poly);
 
 	boa::init(3, 3, GL_FALSE);

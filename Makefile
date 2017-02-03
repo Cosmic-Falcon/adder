@@ -1,7 +1,7 @@
 # General variables
 CC := g++
 AR := ar
-CFLAGS := -std=c++14 -O2 -c
+CFLAGS := -std=c++14 -O2 -c -fconcepts
 ARFLAGS := rcs
 
 # Library variables
